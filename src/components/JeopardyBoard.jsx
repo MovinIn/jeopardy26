@@ -5,7 +5,6 @@ import { formatMoney } from '../game/scoring.js'
 export function JeopardyBoard() {
   const { state, dispatch } = useGame()
   const canPlay = state.board && state.teams.length > 0
-  const controller = state.teams[state.activeTeamIndex]
 
   if (!state.board) {
     return (
@@ -31,15 +30,6 @@ export function JeopardyBoard() {
 
   return (
     <section className="board-section">
-      <p className="turn-banner">
-        {canPlay ? (
-          <>
-            <strong>{controller?.name}</strong> has control of the board
-          </>
-        ) : (
-          'Add contestants to start selecting clues.'
-        )}
-      </p>
       <div className="jeopardy-grid" role="grid" aria-label="Jeopardy board">
         {state.board.categories.map((category, categoryIndex) => (
           <div key={categoryIndex} className="board-column" role="rowgroup">

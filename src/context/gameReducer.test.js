@@ -229,6 +229,41 @@ describe('SET_ACTIVE_TEAM', () => {
   })
 })
 
+describe('COMMIT_BONUS_ROUND', () => {
+  it('adds banked tokens and powerup to the active team', () => {
+    let state = playableState()
+    state = {
+      ...state,
+      teams: state.teams.map((t, i) =>
+        i === 0
+          ? { ...t, bonusTokens: 2, powerups: [] }
+          : { ...t, bonusTokens: 0, powerups: [] },
+      ),
+      activeTeamIndex: 0,
+    }
+    state = gameReducer(state, {
+      type: 'COMMIT_BONUS_ROUND',
+      baseTokens: 3,
+      multiplier: 4,
+      powerup: { id: 'double-next', label: 'Double next' },
+    })
+    expect(state.teams[0].bonusTokens).toBe(14)
+    expect(state.teams[0].powerups).toEqual([{ id: 'double-next', label: 'Double next' }])
+    expect(state.teams[1].bonusTokens).toBe(0)
+  })
+
+  it('ignores commit when there are no teams', () => {
+    const state = { ...initialGameState, teams: [] }
+    const after = gameReducer(state, {
+      type: 'COMMIT_BONUS_ROUND',
+      baseTokens: 5,
+      multiplier: 2,
+      powerup: { id: 'x', label: 'X' },
+    })
+    expect(after).toBe(state)
+  })
+})
+
 describe('RESET_GAME', () => {
   it('zeroes scores and restores every clue', () => {
     let state = withoutDailyDoubles(playableState())

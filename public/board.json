@@ -213,10 +213,18 @@
     }
   ],
   "spinnerEvents": [
-    "Swap scores with another team!",
-    "Double points on your next correct answer!",
-    "Do a victory dance for 10 seconds!",
-    "Pick a teammate for the next clue!",
-    "Placeholder — edit public/board.json"
-  ]
+    { "label": "2 tokens — quick win", "tokens": 2 },
+    { "label": "3 tokens — crowd favorite", "tokens": 3 },
+    { "label": "5 tokens — jackpot wedge", "tokens": 5 },
+    { "label": "1 token — safety spin", "tokens": 1 },
+    { "label": "4 tokens — host's choice", "tokens": 4 }
+  ],
+  "slotPowerups": [
+    { "id": "double-next", "label": "Double points on next correct answer" },
+    { "id": "free-pass", "label": "Free pass on one miss" },
+    { "id": "pick-clue", "label": "Pick the next clue" },
+    { "id": "block-steal", "label": "Block one steal" },
+    { "id": "token-boost", "label": "+2 bonus tokens now" }
+  ],
+  "diceFaces": [1, 2, 3, 4, 5, 6]
 }

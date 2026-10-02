@@ -114,6 +114,63 @@ export function validateBoardJson(raw) {
     finalJeopardy = validateFinal(raw.finalJeopardy, errors)
   }
 
+  let spinnerEvents = []
+  if (raw.spinnerEvents !== undefined) {
+    if (!Array.isArray(raw.spinnerEvents)) {
+      errors.push('"spinnerEvents" must be an array when provided.')
+    } else {
+      spinnerEvents = raw.spinnerEvents
+        .map((e) => {
+          if (typeof e === 'string' && e.trim()) {
+            return e.trim()
+          }
+          if (e && typeof e === 'object' && typeof e.label === 'string' && e.label.trim()) {
+            const out = { label: e.label.trim() }
+            if (typeof e.tokens === 'number' && Number.isFinite(e.tokens)) {
+              out.tokens = Math.max(0, Math.floor(e.tokens))
+            }
+            return out
+          }
+          return null
+        })
+        .filter(Boolean)
+    }
+  }
+
+  let slotPowerups = []
+  if (raw.slotPowerups !== undefined) {
+    if (!Array.isArray(raw.slotPowerups)) {
+      errors.push('"slotPowerups" must be an array when provided.')
+    } else {
+      slotPowerups = raw.slotPowerups
+        .map((e) => {
+          if (typeof e === 'string' && e.trim()) {
+            return e.trim()
+          }
+          if (e && typeof e === 'object' && typeof e.label === 'string' && e.label.trim()) {
+            const out = { label: e.label.trim() }
+            if (typeof e.id === 'string' && e.id.trim()) {
+              out.id = e.id.trim()
+            }
+            return out
+          }
+          return null
+        })
+        .filter(Boolean)
+    }
+  }
+
+  let diceFaces = []
+  if (raw.diceFaces !== undefined) {
+    if (!Array.isArray(raw.diceFaces)) {
+      errors.push('"diceFaces" must be an array of numbers when provided.')
+    } else {
+      diceFaces = raw.diceFaces
+        .filter((v) => typeof v === 'number' && Number.isFinite(v) && v > 0)
+        .map((v) => Math.floor(v))
+    }
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors, warnings, data: null }
   }
@@ -122,6 +179,6 @@ export function validateBoardJson(raw) {
     ok: true,
     errors: [],
     warnings,
-    data: { title, categories, doubleJeopardy, finalJeopardy },
+    data: { title, categories, doubleJeopardy, finalJeopardy, spinnerEvents, slotPowerups, diceFaces },
   }
 }

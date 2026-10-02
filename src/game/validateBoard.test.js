@@ -67,6 +67,28 @@ describe('validateBoardJson', () => {
     expect(result.errors.some((e) => e.includes('finalJeopardy'))).toBe(true)
   })
 
+  it('accepts spinnerEvents as strings or token objects', () => {
+    const data = {
+      ...makeValidBoard(),
+      spinnerEvents: ['Plain', { label: 'Five pack', tokens: 5 }],
+    }
+    const result = validateBoardJson(data)
+    expect(result.ok).toBe(true)
+    expect(result.data.spinnerEvents).toEqual(['Plain', { label: 'Five pack', tokens: 5 }])
+  })
+
+  it('accepts optional slotPowerups and diceFaces', () => {
+    const data = {
+      ...makeValidBoard(),
+      slotPowerups: [{ id: 'peek', label: 'Peek' }],
+      diceFaces: [2, 3, 4],
+    }
+    const result = validateBoardJson(data)
+    expect(result.ok).toBe(true)
+    expect(result.data.slotPowerups).toEqual([{ id: 'peek', label: 'Peek' }])
+    expect(result.data.diceFaces).toEqual([2, 3, 4])
+  })
+
   it('preserves author-flagged Daily Doubles', () => {
     const data = makeValidBoard()
     data.categories[1].clues[2].dailyDouble = true

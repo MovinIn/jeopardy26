@@ -34,7 +34,6 @@ export function TeamPanel() {
 
   return (
     <div className="panel team-panel">
-      <h2>Teams</h2>
       <form className="add-team-form" onSubmit={addTeam}>
         <input
           value={newTeamName}
@@ -87,6 +86,18 @@ export function TeamPanel() {
                   </button>
                 </div>
                 <div className="team-score">${team.score.toLocaleString()}</div>
+                {((team.bonusTokens ?? 0) > 0 || (team.powerups?.length ?? 0) > 0) && (
+                  <div className="team-bonus-meta">
+                    {(team.bonusTokens ?? 0) > 0 && (
+                      <span className="team-bonus-tokens">{team.bonusTokens} tokens</span>
+                    )}
+                    {(team.powerups?.length ?? 0) > 0 && (
+                      <span className="team-bonus-powerups">
+                        {team.powerups.length} powerup{team.powerups.length === 1 ? '' : 's'}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </li>
           )

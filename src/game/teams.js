@@ -5,5 +5,9 @@ export function createDefaultTeams() {
     id: `team-${i + 1}`,
     name: `Team ${i + 1}`,
     score: 0,
+    /** Bonus minigame currency (per team); dice multiplier applies when banked. */
+    bonusTokens: 0,
+    /** Consumable powerups won in the slots stage (per team). */
+    powerups: [],
   }))
 }

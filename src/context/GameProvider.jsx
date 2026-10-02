@@ -56,6 +56,25 @@ export function GameProvider({ children }) {
   }, [state.source])
 
   useEffect(() => {
+    const hasGame = Boolean(state.source || state.board)
+    if (!hasGame || (state.spinnerEvents?.length ?? 0) > 0) {
+      return undefined
+    }
+    let cancelled = false
+    loadBoardFromFile()
+      .then((result) => {
+        if (cancelled || !result.data.spinnerEvents?.length) {
+          return
+        }
+        dispatch({ type: 'SET_SPINNER_EVENTS', events: result.data.spinnerEvents })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [state.source, state.board, state.spinnerEvents?.length])
+
+  useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     } catch {

@@ -8,6 +8,7 @@ import {
 } from '../game/board.js'
 import { canPlayFinal, clampDailyDoubleWager, clampFinalWager } from '../game/scoring.js'
 import { createDefaultTeams } from '../game/teams.js'
+import { computeBankedTokens } from '../game/bonusRound.js'
 import { lowestScoreIndex, nextTeamIndex, normalizeTeamIndex } from '../game/turns.js'
 
 let teamIdCounter = 5
@@ -31,6 +32,9 @@ export const initialGameState = {
   finalWagers: {},
   finalResults: {},
   finalRevealed: false,
+  spinnerEvents: [],
+  slotPowerups: [],
+  diceFaces: [],
 }
 
 function buildBoard(categories, title) {
@@ -40,18 +44,29 @@ function buildBoard(categories, title) {
 }
 
 function startGame(state, source) {
+  const spinnerEvents = source.spinnerEvents ?? state.spinnerEvents ?? []
+  const slotPowerups = source.slotPowerups ?? state.slotPowerups ?? []
+  const diceFaces = source.diceFaces ?? state.diceFaces ?? []
   return {
     ...state,
-    source,
+    source: { ...source, spinnerEvents, slotPowerups, diceFaces },
     board: buildBoard(source.jeopardy, state.title),
     round: 'jeopardy',
     phase: 'board',
-    teams: state.teams.map((t) => ({ ...t, score: 0 })),
+    teams: state.teams.map((t) => ({
+      ...t,
+      score: 0,
+      bonusTokens: 0,
+      powerups: [],
+    })),
     activeTeamIndex: normalizeTeamIndex(state.teams.length, 0),
     selectedClue: null,
     finalWagers: {},
     finalResults: {},
     finalRevealed: false,
+    spinnerEvents,
+    slotPowerups,
+    diceFaces,
   }
 }
 
@@ -75,29 +90,76 @@ export function gameReducer(state, action) {
     case 'IMPORT_BOARD':
     case 'INIT_FROM_FILE': {
       const { boardData } = action
+      const spinnerEvents = boardData.spinnerEvents ?? []
+      const slotPowerups = boardData.slotPowerups ?? []
+      const diceFaces = boardData.diceFaces ?? []
       const source = {
         jeopardy: assignDailyDoubles(boardData.categories, 1),
         doubleJeopardy: boardData.doubleJeopardy
           ? assignDailyDoubles(boardData.doubleJeopardy, 2)
           : null,
         finalJeopardy: boardData.finalJeopardy ?? null,
+        spinnerEvents,
+        slotPowerups,
+        diceFaces,
       }
       const teams =
         state.teams.length > 0 ? state.teams : createDefaultTeams()
-      return startGame(
-        {
-          ...state,
-          title: boardData.title,
-          importWarnings: action.warnings ?? [],
-          teams,
-        },
-        source,
-      )
+      return {
+        ...startGame(
+          {
+            ...state,
+            title: boardData.title,
+            importWarnings: action.warnings ?? [],
+            teams,
+          },
+          source,
+        ),
+        spinnerEvents,
+        slotPowerups,
+        diceFaces,
+      }
+    }
+
+    case 'COMMIT_BONUS_ROUND': {
+      if (state.teams.length === 0) {
+        return state
+      }
+      const idx = normalizeTeamIndex(state.teams.length, state.activeTeamIndex)
+      const banked = computeBankedTokens(action.baseTokens, action.multiplier)
+      const powerup = action.powerup
+      const teams = state.teams.map((t, i) => {
+        if (i !== idx) {
+          return t
+        }
+        const powerups = powerup?.label
+          ? [...(t.powerups ?? []), { id: powerup.id ?? powerup.label, label: powerup.label }]
+          : (t.powerups ?? [])
+        return {
+          ...t,
+          bonusTokens: (t.bonusTokens ?? 0) + banked,
+          powerups,
+        }
+      })
+      return { ...state, teams }
+    }
+
+    case 'SET_SPINNER_EVENTS': {
+      return {
+        ...state,
+        spinnerEvents: action.events ?? [],
+        source: state.source
+          ? { ...state.source, spinnerEvents: action.events ?? [] }
+          : state.source,
+      }
     }
 
     case 'ADD_TEAM': {
       const name = action.name?.trim() || `Team ${state.teams.length + 1}`
-      const teams = [...state.teams, { id: createTeamId(), name, score: 0 }]
+      const teams = [
+        ...state.teams,
+        { id: createTeamId(), name, score: 0, bonusTokens: 0, powerups: [] },
+      ]
       return {
         ...state,
         teams,
