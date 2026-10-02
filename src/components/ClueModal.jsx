@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { getCell, highestClueValue } from '../game/board.js'
 import { MIN_WAGER, formatMoney, maxDailyDoubleWager } from '../game/scoring.js'
 import { useGame } from '../context/GameProvider.jsx'
+import { ClueText } from './ClueText.jsx'
 
 function WagerForm({ team, maxWager, onSubmit }) {
   const [amount, setAmount] = useState(String(Math.min(maxWager, Math.max(team.score, MIN_WAGER))))
@@ -85,9 +86,15 @@ export function ClueModal() {
               <strong>{controller.name}</strong> is answering for {formatMoney(sel.wager)}
             </p>
           )}
-          <p className="clue-text">{cell.clue}</p>
+          <p className="clue-text">
+            <ClueText text={cell.clue} />
+          </p>
 
-          {sel.revealed && <p className="clue-answer">{cell.answer}</p>}
+          {sel.revealed && (
+            <p className="clue-answer">
+              <ClueText text={cell.answer} />
+            </p>
+          )}
 
           <div className="judge-panel">
             {(isDailyDouble ? [controller] : state.teams).map((team) => {

@@ -42,12 +42,19 @@
 
 .host-toolbar {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .toolbar-btn {
   width: 100%;
   font-size: 0.75rem;
   padding: 0.35rem 0.5rem;
+}
+
+.music-toggle.is-muted {
+  opacity: 0.72;
 }
 
 .eyebrow {

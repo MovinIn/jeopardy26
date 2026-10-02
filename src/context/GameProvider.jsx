@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useReducer, useState } f
 import { loadBoardFromFile } from '../data/loadBoard.js'
 import { gameReducer, initialGameState } from './gameReducer.js'
 
-const STORAGE_KEY = 'jeopardy-game-state-v4'
+const STORAGE_KEY = 'jeopardy-game-state-v5'
 
 const GameContext = createContext(null)
 

@@ -1,4 +1,5 @@
 import { useGame } from '../context/GameProvider.jsx'
+import { ClueText } from './ClueText.jsx'
 import { canPlayFinal, formatMoney } from '../game/scoring.js'
 
 function Standings({ teams }) {
@@ -84,14 +85,18 @@ export function FinalJeopardy() {
     <section className="final-screen">
       <p className="final-title">Final Jeopardy!</p>
       <p className="final-category">{final.category}</p>
-      <p className="clue-text">{final.clue}</p>
+      <p className="clue-text">
+        <ClueText text={final.clue} />
+      </p>
       {!state.finalRevealed ? (
         <button type="button" onClick={() => dispatch({ type: 'REVEAL_FINAL' })}>
           Time&apos;s up: reveal response
         </button>
       ) : (
         <>
-          <p className="clue-answer">{final.answer}</p>
+          <p className="clue-answer">
+            <ClueText text={final.answer} />
+          </p>
           <div className="judge-panel">
             {finalists.map((team) => {
               const result = state.finalResults[team.id]

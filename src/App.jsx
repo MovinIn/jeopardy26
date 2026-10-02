@@ -4,6 +4,7 @@ import { HostControls } from './components/HostControls.jsx'
 import { JeopardyBoard } from './components/JeopardyBoard.jsx'
 import { ShopButton } from './components/ShopButton.jsx'
 import { TeamPanel } from './components/TeamPanel.jsx'
+import { GameMusic } from './components/GameMusic.jsx'
 import { useGame } from './context/GameProvider.jsx'
 import './App.css'
 
@@ -30,6 +31,10 @@ function App() {
         </main>
       </div>
       <ClueModal />
+      <GameMusic
+        active={state.phase === 'board' && Boolean(state.board)}
+        ducked={Boolean(state.selectedClue)}
+      />
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { GameProvider } from '../../context/GameProvider.jsx'
 import { ShopModal } from './ShopModal.jsx'
 
-const STORAGE_KEY = 'jeopardy-game-state-v4'
+const STORAGE_KEY = 'jeopardy-game-state-v5'
 
 function seedScores(scores) {
   const teams = scores.map((score, i) => ({

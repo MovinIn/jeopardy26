@@ -1,217 +1,222 @@
 {
-  "title": "Jeopardy Night",
+  "title": "Game Night Jeopardy",
   "categories": [
     {
-      "name": "Science",
+      "name": "Football",
       "clues": [
         {
           "value": 200,
-          "clue": "This planet is known as the Red Planet.",
-          "answer": "What is Mars?",
-          "hint": "Fourth rock from the Sun"
+          "clue": "This NFL team plays home games at Lambeau Field and is famous for the \"Frozen Tundra.\"",
+          "answer": "Who are the Green Bay Packers?",
+          "hint": "Wisconsin's pro team"
         },
         {
           "value": 400,
-          "clue": "H2O is the chemical formula for this.",
-          "answer": "What is water?",
-          "hint": "You drink it daily"
+          "clue": "UW–Madison's home stadium, where Badger fans \"Jump Around\" at Camp Randall.",
+          "answer": "What is Camp Randall Stadium?",
+          "hint": "Not the Kohl Center"
         },
         {
           "value": 600,
-          "clue": "The force that keeps us on the ground.",
-          "answer": "What is gravity?",
-          "hint": "Newton's apple"
+          "clue": "The trophy awarded to the winner of the NFL's championship game.",
+          "answer": "What is the Vince Lombardi Trophy?",
+          "hint": "Named for a legendary coach"
         },
         {
           "value": 800,
-          "clue": "The powerhouse of the cell.",
-          "answer": "What is the mitochondria?",
-          "hint": "Meme-famous organelle"
+          "clue": "This Badger legend coached Wisconsin football to three Rose Bowl wins and later served as athletic director.",
+          "answer": "Who is Barry Alvarez?",
+          "hint": "Built the program in the 1990s–2000s"
         },
         {
           "value": 1000,
-          "clue": "Einstein's equation links energy and mass.",
-          "answer": "What is E=mc²?",
-          "hint": "Three symbols"
+          "clue": "In 2010, this quarterback led the Packers to a Super Bowl XLV win over Pittsburgh; he grew up in Wisconsin.",
+          "answer": "Who is Aaron Rodgers?",
+          "hint": "Also played at Cal"
         }
       ]
     },
     {
-      "name": "Movies",
+      "name": "Bible Knowledge",
       "clues": [
         {
           "value": 200,
-          "clue": "A shark terrorizes Amity Island.",
-          "answer": "What is Jaws?",
-          "hint": "Spielberg, 1975"
+          "clue": "The first book of the Bible, which opens \"In the beginning…\"",
+          "answer": "What is Genesis?",
+          "hint": "Creation and patriarchs"
         },
         {
           "value": 400,
-          "clue": "Luke Skywalker's father.",
-          "answer": "Who is Darth Vader?",
-          "hint": "I am your..."
+          "clue": "He built an ark and saved his family and the animals from the flood.",
+          "answer": "Who is Noah?",
+          "hint": "Rainbow covenant"
         },
         {
           "value": 600,
-          "clue": "School of witchcraft and wizardry in Scotland.",
-          "answer": "What is Hogwarts?",
-          "hint": "Harry Potter"
+          "clue": "The shortest verse in the King James Bible: \"Jesus wept.\"",
+          "answer": "What is John 11:35?",
+          "hint": "Gospel of John"
         },
         {
           "value": 800,
-          "clue": "Life is like a box of chocolates.",
-          "answer": "What is Forrest Gump?",
-          "hint": "Tom Hanks on a bench"
+          "clue": "Paul's missionary companion who deserted him in Pamphylia, according to Acts.",
+          "answer": "Who is John Mark (Mark)?",
+          "hint": "Also a Gospel author"
         },
         {
           "value": 1000,
-          "clue": "A dream within a dream.",
-          "answer": "What is Inception?",
-          "hint": "Spinning top"
+          "clue": "The Old Testament book that never mentions God by name, yet tells of Esther and Mordecai.",
+          "answer": "What is Esther?",
+          "hint": "Purim"
         }
       ]
     },
     {
-      "name": "Geography",
+      "name": "Spelling Bee",
       "clues": [
         {
           "value": 200,
-          "clue": "Capital of France.",
-          "answer": "What is Paris?",
-          "hint": "City of Light"
+          "clue": "Spell the name of the city where Jesus was born.",
+          "answer": "What is B-E-T-H-L-E-H-E-M?",
+          "hint": "Five syllables"
         },
         {
           "value": 400,
-          "clue": "Longest river in the world.",
-          "answer": "What is the Nile?",
-          "hint": "Flows through Egypt"
+          "clue": "Spell the first name of Moses' brother, who helped lead Israel out of Egypt.",
+          "answer": "What is A-A-R-O-N?",
+          "hint": "High priest"
         },
         {
           "value": 600,
-          "clue": "Smallest country in the world.",
-          "answer": "What is Vatican City?",
-          "hint": "Inside Rome"
+          "clue": "Spell the theological term for \"study of the end times.\"",
+          "answer": "What is E-S-C-H-A-T-O-L-O-G-Y?",
+          "hint": "Starts with E-S-C"
         },
         {
           "value": 800,
-          "clue": "Country with the most natural lakes.",
-          "answer": "What is Canada?",
-          "hint": "Maple leaf"
+          "clue": "Spell the New Testament city where Paul preached on Mars Hill.",
+          "answer": "What is A-T-H-E-N-S?",
+          "hint": "Capital of Greece"
         },
         {
           "value": 1000,
-          "clue": "Mount Everest's mountain range.",
-          "answer": "What are the Himalayas?",
-          "hint": "Nepal and Tibet"
+          "clue": "Spell the name of the valley where David fought Goliath.",
+          "answer": "What is E-L-A-H?",
+          "hint": "Valley of ___"
         }
       ]
     },
     {
-      "name": "Music",
+      "name": "Gambling",
       "clues": [
         {
           "value": 200,
-          "clue": "The King of Pop.",
-          "answer": "Who is Michael Jackson?",
-          "hint": "Moonwalk"
+          "clue": "Host debate: Is gambling good? In Jeopardy form — many churches would say this about games of chance for money.",
+          "answer": "What is sinful or unwise (or \"love of money is a root of evil\")?",
+          "hint": "1 Timothy 6:10 is fair game for discussion"
         },
         {
           "value": 400,
-          "clue": "Four lads from Liverpool.",
-          "answer": "Who are The Beatles?",
-          "hint": "Abbey Road"
+          "clue": "In blackjack, this two-card total beats everything except a natural blackjack.",
+          "answer": "What is 21?",
+          "hint": "Same as the game name"
         },
         {
           "value": 600,
-          "clue": "Composer of The Four Seasons.",
-          "answer": "Who is Vivaldi?",
-          "hint": "Italian Baroque"
+          "clue": "The house advantage built into every casino game.",
+          "answer": "What is the vig (or house edge)?",
+          "hint": "Vegas math"
         },
         {
           "value": 800,
-          "clue": "Sang \"Hello\" and \"Rolling in the Deep\".",
-          "answer": "Who is Adele?",
-          "hint": "British vocalist"
+          "clue": "Betting term for a wager on whether the total combined score goes over or under a line.",
+          "answer": "What is the over/under?",
+          "hint": "Not a spread"
         },
         {
           "value": 1000,
-          "clue": "Mozart's middle name.",
-          "answer": "What is Amadeus?",
-          "hint": "Also a film"
+          "clue": "In poker, five cards in sequence, all the same suit.",
+          "answer": "What is a straight flush?",
+          "hint": "Better than a full house"
         }
       ]
     },
     {
-      "name": "Sports",
+      "name": "Math",
       "clues": [
         {
           "value": 200,
-          "clue": "You score a touchdown in this sport.",
-          "answer": "What is football?",
-          "hint": "NFL"
+          "clue": "What is the value of $2 + 3 \\times 4$ if you follow order of operations?",
+          "answer": "What is 14?",
+          "hint": "Multiply before you add"
         },
         {
           "value": 400,
-          "clue": "Players on court per basketball team.",
-          "answer": "What is five?",
-          "hint": "One hand's worth"
+          "clue": "The area of a circle with radius $r$ is given by \\( \\pi r^2 \\).",
+          "answer": "What is \\( \\pi r^2 \\)?",
+          "hint": "Pi times radius squared"
         },
         {
           "value": 600,
-          "clue": "Tournament held at Wimbledon.",
-          "answer": "What is tennis?",
-          "hint": "Love means zero"
+          "clue": "Solve for $x$: $2x - 5 = 11$.",
+          "answer": "What is $x = 8$?",
+          "hint": "Add 5, then divide by 2"
         },
         {
           "value": 800,
-          "clue": "Most FIFA World Cup wins.",
-          "answer": "What is Brazil?",
-          "hint": "South America"
+          "clue": "Evaluate the definite integral $$\\int_0^2 3x\\,dx$$.",
+          "answer": "What is 6?",
+          "hint": "Antiderivative is $\\frac{3}{2}x^2$"
         },
         {
           "value": 1000,
-          "clue": "Michael Jordan's primary NBA team.",
-          "answer": "What are the Chicago Bulls?",
-          "hint": "Windy City"
+          "clue": "In the quadratic formula, the expression under the square root: $b^2 - 4ac$.",
+          "answer": "What is the discriminant?",
+          "hint": "Tells you how many real roots"
         }
       ]
     },
     {
-      "name": "Pop Culture",
+      "name": "Verse Memory",
       "clues": [
         {
           "value": 200,
-          "clue": "Mario's brother in green.",
-          "answer": "Who is Luigi?",
-          "hint": "Plumber"
+          "clue": "Finish the verse: \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him…\"",
+          "answer": "What is \"should not perish, but have everlasting life\" (John 3:16)?",
+          "hint": "John 3:16"
         },
         {
           "value": 400,
-          "clue": "Streaming service with Stranger Things.",
-          "answer": "What is Netflix?",
-          "hint": "Red N"
+          "clue": "Finish the verse: \"The Lord is my shepherd; I shall not…\"",
+          "answer": "What is \"want\" (Psalm 23:1)?",
+          "hint": "Psalm 23"
         },
         {
           "value": 600,
-          "clue": "Blue bird app now called X.",
-          "answer": "What is Twitter?",
-          "hint": "Elon"
+          "clue": "Finish the verse: \"Trust in the Lord with all thine heart; and lean not unto thine own…\"",
+          "answer": "What is \"understanding\" (Proverbs 3:5)?",
+          "hint": "Proverbs 3"
         },
         {
           "value": 800,
-          "clue": "K-pop group with Jungkook and RM.",
-          "answer": "Who is BTS?",
-          "hint": "Army"
+          "clue": "Finish the verse: \"But they that wait upon the Lord shall renew their strength; they shall mount up with wings as…\"",
+          "answer": "What is \"eagles\" (Isaiah 40:31)?",
+          "hint": "Isaiah 40"
         },
         {
           "value": 1000,
-          "clue": "221B Baker Street detective.",
-          "answer": "Who is Sherlock Holmes?",
-          "hint": "Elementary"
+          "clue": "Finish the verse: \"I can do all things through Christ which…\"",
+          "answer": "What is \"strengtheneth me\" (Philippians 4:13)?",
+          "hint": "Paul's letter to Philippi"
         }
       ]
     }
   ],
+  "finalJeopardy": {
+    "category": "Verse Memory",
+    "clue": "Complete the reference and missing word: \"Thy word is a lamp unto my feet, and a light unto my ___\" (Psalm __:105).",
+    "answer": "What is \"path\" (Psalm 119:105)?"
+  },
   "spinnerEvents": [
     { "label": "2 tokens — quick win", "tokens": 2 },
     { "label": "3 tokens — crowd favorite", "tokens": 3 },

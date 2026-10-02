@@ -36,3 +36,11 @@ Import a file or paste JSON. A full example lives at [`public/sample-board.json`
 - **Game over**: Final standings and the champion are shown.
 
 Contestants and scores persist in `localStorage`. **New game** keeps the board and contestants but resets scores and clues.
+
+## Background music
+
+- Drop a loop-friendly track at [`public/audio/jeopardy-theme.mp3`](public/audio/jeopardy-theme.mp3) (optional `.ogg`). The repo does **not** include the copyrighted TV theme; see [`public/audio/README.md`](public/audio/README.md).
+- If no file is present, the host hears a short Web Audio “thinking” tone loop instead.
+- **Music on / Music off** in the side rail (above **Reset**). Preference is stored in `localStorage` under `jeopardy-music-prefs-v1`.
+- Music loops only during the **main board** phase (not Final Jeopardy!). Volume ducks to 30% while a clue modal is open.
+- **Autoplay:** music starts **muted by default**. After you click or press a key anywhere on the page, unmute with **Music off** → **Music on** (or toggle once if you already prefer sound on).
