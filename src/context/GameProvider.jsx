@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
 import { gameReducer, initialGameState } from './gameReducer.js'
 
-const STORAGE_KEY = 'jeopardy-game-state-v1'
+const STORAGE_KEY = 'jeopardy-game-state-v2'
 
 const GameContext = createContext(null)
 
@@ -27,23 +27,12 @@ export function GameProvider({ children }) {
   })
 
   useEffect(() => {
-    const toSave = {
-      title: state.title,
-      board: state.board,
-      spinnerEvents: state.spinnerEvents,
-      teams: state.teams,
-      activeTeamIndex: state.activeTeamIndex,
-      importWarnings: state.importWarnings,
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    } catch {
+      // storage full or unavailable; the game still works for this session
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
-  }, [
-    state.title,
-    state.board,
-    state.spinnerEvents,
-    state.teams,
-    state.activeTeamIndex,
-    state.importWarnings,
-  ])
+  }, [state])
 
   const value = useMemo(() => ({ state, dispatch }), [state])
 

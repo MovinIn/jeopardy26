@@ -1,16 +1,45 @@
 import { describe, expect, it } from 'vitest'
-import { getClueAmounts } from './scoring.js'
+import {
+  canPlayFinal,
+  clampDailyDoubleWager,
+  clampFinalWager,
+  formatMoney,
+  maxDailyDoubleWager,
+} from './scoring.js'
 
-describe('getClueAmounts', () => {
-  it('returns base win and loss when hint not used', () => {
-    expect(getClueAmounts(500, false)).toEqual({ win: 500, loss: 500 })
+describe('Daily Double wagers', () => {
+  it('caps at the round top value when the score is lower', () => {
+    expect(maxDailyDoubleWager(200, 1000)).toBe(1000)
   })
 
-  it('returns reduced win and increased loss when hint used on $500 clue', () => {
-    expect(getClueAmounts(500, true)).toEqual({ win: 400, loss: 600 })
+  it('caps at the score when it exceeds the round top value', () => {
+    expect(maxDailyDoubleWager(4000, 1000)).toBe(4000)
   })
 
-  it('returns adjusted amounts when hint used on $200 clue', () => {
-    expect(getClueAmounts(200, true)).toEqual({ win: 100, loss: 300 })
+  it('clamps to the $5 minimum and the maximum', () => {
+    expect(clampDailyDoubleWager(1, 500, 1000)).toBe(5)
+    expect(clampDailyDoubleWager(5000, 500, 1000)).toBe(1000)
+    expect(clampDailyDoubleWager('abc', 500, 1000)).toBe(5)
+  })
+})
+
+describe('Final Jeopardy wagers', () => {
+  it('only lets positive scores play', () => {
+    expect(canPlayFinal(1)).toBe(true)
+    expect(canPlayFinal(0)).toBe(false)
+    expect(canPlayFinal(-100)).toBe(false)
+  })
+
+  it('clamps between zero and the score', () => {
+    expect(clampFinalWager(-5, 800)).toBe(0)
+    expect(clampFinalWager(900, 800)).toBe(800)
+    expect(clampFinalWager(250, 800)).toBe(250)
+  })
+})
+
+describe('formatMoney', () => {
+  it('formats positive and negative amounts', () => {
+    expect(formatMoney(1200)).toBe('$1,200')
+    expect(formatMoney(-400)).toBe('-$400')
   })
 })

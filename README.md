@@ -1,6 +1,6 @@
-# Jeopardy (client-side host)
+# Jeopardy! (client-side host)
 
-React + Vite Jeopardy board for game night hosting. No server — import a JSON board, add teams, and run the game from your browser.
+React + Vite Jeopardy! for game night, styled and played like the TV show. No server: import a JSON board, add contestants, and host from your browser.
 
 ## Quick start
 
@@ -19,29 +19,20 @@ npm test
 
 Import a file or paste JSON. A full example lives at [`public/sample-board.json`](public/sample-board.json).
 
-Required shape:
+- `title`: string
+- `categories`: **exactly 6** categories for the Jeopardy! round, each with `name` and **exactly 5** `clues` (`value`, `clue`, `answer`). Standard values are 200–1000.
+- `doubleJeopardy` (optional): `{ "categories": [...] }` in the same shape, with values 400–2000.
+- `finalJeopardy` (optional): `{ "category", "clue", "answer" }`
+- `dailyDouble: true` on any clue (optional) pins a Daily Double there. If you flag none in a round, they are hidden at random: 1 in Jeopardy!, 2 in Double Jeopardy!, never in the top row, never in the same column.
 
-- `title` — string
-- `categories` — **exactly 6** objects, each with:
-  - `name` — string
-  - `clues` — **exactly 5** objects with `value`, `clue`, `answer`
-  - optional `hint` per clue
-- optional `spinnerEvents` — array of strings for the fun spinner
+## Rules (as on the show)
 
-Standard clue values are 200, 400, 600, 800, and 1000. Other values trigger a warning but still load.
+- **Control**: The contestant in control picks the next clue. Whoever answers correctly takes control.
+- **Judging**: On a clue, mark each contestant Correct (+value) or Incorrect (−value). A miss locks that contestant out and the clue stays open for the others. If everyone misses, or you choose **No one got it**, the response is revealed and control stays put.
+- **Negative scores** are allowed.
+- **Daily Double**: Only the contestant in control plays it. Wager $5 up to the greater of their score or the round's top clue value. Correct wins the wager, incorrect loses it, and control stays with them either way.
+- **Double Jeopardy!**: Values double, and the contestant in last place chooses first.
+- **Final Jeopardy!**: Only contestants with a positive score play. Each wagers up to their whole score, the clue is revealed, then you judge each response.
+- **Game over**: Final standings and the champion are shown.
 
-## Game rules (built-in)
-
-- **Teams**: Add, rename, or remove teams. Scores persist in `localStorage` until you clear site data.
-- **Turns**: After each clue is marked correct or incorrect, play passes to the next team automatically. Use **Switch here** or **Next team (manual)** anytime.
-- **Hints**: One hint per clue. Using a hint reduces a correct answer by **100** points and increases a wrong answer penalty by **100** points (e.g. $500 → +400 / −600).
-- **Spinner**: Picks a random label from `spinnerEvents`. Display-only for now — extend JSON/handlers later for score effects.
-
-## Host flow
-
-1. Load sample board or import your JSON.
-2. Add at least one team.
-3. Active team selects a dollar amount on the board.
-4. Optional: request hint, then mark **Correct** or **Incorrect**.
-5. Use **Reveal answer** when you want to show the official response.
-6. **New game (reset scores)** keeps the same board and teams but clears progress and scores.
+Contestants and scores persist in `localStorage`. **New game** keeps the board and contestants but resets scores and clues.

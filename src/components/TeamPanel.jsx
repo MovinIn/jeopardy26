@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useGame } from '../context/GameProvider.jsx'
+import { formatMoney } from '../game/scoring.js'
 
 export function TeamPanel() {
   const { state, dispatch } = useGame()
@@ -12,43 +13,39 @@ export function TeamPanel() {
   }
 
   return (
-    <div className="panel team-panel">
-      <h2>Teams</h2>
-      <form className="add-team-form" onSubmit={addTeam}>
-        <input
-          value={newTeamName}
-          onChange={(e) => setNewTeamName(e.target.value)}
-          placeholder="Team name (optional)"
-        />
-        <button type="submit">Add team</button>
-      </form>
-
-      {state.teams.length === 0 && <p className="hint-text">Add at least one team to play.</p>}
-
-      <ul className="team-list">
+    <section className="podiums-section" aria-label="Contestants">
+      <ul className="podiums">
         {state.teams.map((team, index) => {
-          const isActive = index === state.activeTeamIndex
+          const inControl = state.phase === 'board' && index === state.activeTeamIndex
           return (
-            <li key={team.id} className={isActive ? 'team-card active' : 'team-card'}>
-              <div className="team-header">
-                <input
-                  className="team-name-input"
-                  value={team.name}
-                  onChange={(e) =>
-                    dispatch({ type: 'RENAME_TEAM', teamId: team.id, name: e.target.value })
-                  }
-                  aria-label={`Name for ${team.name}`}
-                />
-                {isActive && <span className="active-badge">Playing</span>}
+            <li key={team.id} className={inControl ? 'podium in-control' : 'podium'}>
+              <div className="podium-score" data-negative={team.score < 0}>
+                {formatMoney(team.score)}
               </div>
-              <div className="team-score">${team.score.toLocaleString()}</div>
-              <div className="team-actions">
-                <button type="button" onClick={() => dispatch({ type: 'SET_ACTIVE_TEAM', index })}>
-                  Switch here
-                </button>
+              <input
+                className="podium-name"
+                value={team.name}
+                onChange={(e) =>
+                  dispatch({ type: 'RENAME_TEAM', teamId: team.id, name: e.target.value })
+                }
+                aria-label={`Name for ${team.name}`}
+              />
+              <div className="podium-actions">
+                {inControl ? (
+                  <span className="control-badge">In control</span>
+                ) : (
+                  <button
+                    type="button"
+                    className="secondary"
+                    disabled={state.phase !== 'board'}
+                    onClick={() => dispatch({ type: 'SET_ACTIVE_TEAM', index })}
+                  >
+                    Give control
+                  </button>
+                )}
                 <button
                   type="button"
-                  className="danger secondary"
+                  className="secondary"
                   onClick={() => dispatch({ type: 'REMOVE_TEAM', teamId: team.id })}
                 >
                   Remove
@@ -59,11 +56,16 @@ export function TeamPanel() {
         })}
       </ul>
 
-      {state.teams.length > 1 && (
-        <button type="button" className="secondary" onClick={() => dispatch({ type: 'NEXT_TEAM' })}>
-          Next team (manual)
-        </button>
-      )}
-    </div>
+      {state.teams.length === 0 && <p className="hint-text">Add at least one contestant to play.</p>}
+
+      <form className="add-team-form" onSubmit={addTeam}>
+        <input
+          value={newTeamName}
+          onChange={(e) => setNewTeamName(e.target.value)}
+          placeholder="Contestant name (optional)"
+        />
+        <button type="submit">Add contestant</button>
+      </form>
+    </section>
   )
 }

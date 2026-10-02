@@ -14,3 +14,14 @@ export function normalizeTeamIndex(teamCount, index) {
   }
   return index
 }
+
+/** Index of the lowest-scoring team (first on ties); they pick first in Double Jeopardy. */
+export function lowestScoreIndex(teams) {
+  let best = 0
+  teams.forEach((team, i) => {
+    if (team.score < teams[best].score) {
+      best = i
+    }
+  })
+  return best
+}

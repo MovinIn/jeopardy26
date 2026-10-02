@@ -1,23 +1,27 @@
 :root {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
+  font-family: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  line-height: 1.4;
   font-weight: 400;
-  color: #f4f7ff;
-  background-color: #060b1a;
+  color: #ffffff;
+  background-color: #000000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --board-blue: #0a1172;
-  --board-blue-dark: #060a4a;
-  --gold: #ffd966;
-  --gold-dark: #c9a227;
-  --panel: #101833;
-  --panel-border: #2a3566;
-  --success: #2ecc71;
-  --danger: #e74c3c;
-  --text-muted: #a8b3d9;
+  /* Jeopardy! broadcast palette */
+  --board-blue: #060ce9;
+  --board-blue-dark: #000000;
+  --clue-blue: #0b1aa8;
+  --gold: #d69f4c;
+  --gold-bright: #ffcc00;
+  --panel: #0a0e5c;
+  --panel-border: #3a45d6;
+  --success: #2e9e55;
+  --danger: #c0392b;
+  --text-muted: #b9c0f5;
+  --font-clue: 'ITC Korinna', 'Korinna', 'Bookman Old Style', 'URW Bookman', Georgia, serif;
+  --font-display: 'Anton', 'Swiss 911', 'Oswald', Impact, sans-serif;
 }
 
 * {
@@ -28,7 +32,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #1a2560 0%, #060b1a 55%);
+  background: radial-gradient(circle at top, #0a0e8a 0%, #02031f 60%, #000 100%);
 }
 
 #root {
@@ -44,11 +48,12 @@ textarea {
 button {
   cursor: pointer;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0.55rem 0.9rem;
-  background: linear-gradient(180deg, #ffe08a 0%, var(--gold) 100%);
-  color: #1a1200;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 100%);
+  color: #1a1000;
   font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 button:disabled {
@@ -57,28 +62,28 @@ button:disabled {
 }
 
 button.secondary {
-  background: #243056;
-  color: #eef2ff;
+  background: #14199e;
+  color: #fff;
   border: 1px solid var(--panel-border);
 }
 
 button.success {
-  background: linear-gradient(180deg, #5ddea0 0%, var(--success) 100%);
-  color: #052010;
+  background: linear-gradient(180deg, #52c27d 0%, var(--success) 100%);
+  color: #04200f;
 }
 
 button.danger {
-  background: linear-gradient(180deg, #ff8a7a 0%, var(--danger) 100%);
+  background: linear-gradient(180deg, #e8604f 0%, var(--danger) 100%);
   color: #fff;
 }
 
 input,
 textarea {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid var(--panel-border);
-  background: #0c1228;
-  color: #f4f7ff;
+  background: #05073a;
+  color: #fff;
   padding: 0.5rem 0.65rem;
 }
 

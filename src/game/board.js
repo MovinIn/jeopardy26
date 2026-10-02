@@ -8,7 +8,7 @@ export function createInitialBoard(categories) {
         value: clueData.value,
         clue: clueData.clue,
         answer: clueData.answer,
-        hint: clueData.hint ?? null,
+        dailyDouble: Boolean(clueData.dailyDouble),
         resolved: false,
         result: null,
       })
@@ -45,4 +45,33 @@ export function allCluesResolved(board) {
     return false
   }
   return board.cells.every((cell) => cell.resolved)
+}
+
+export function highestClueValue(board) {
+  return board.cells.reduce((max, cell) => Math.max(max, cell.value), 0)
+}
+
+/**
+ * Hides `count` Daily Doubles on a round unless the author already flagged some.
+ * Like the show, they never sit in the top row and never share a column.
+ */
+export function assignDailyDoubles(categories, count, rng = Math.random) {
+  if (categories.some((cat) => cat.clues.some((c) => c.dailyDouble))) {
+    return categories
+  }
+  const columns = categories.map((_, i) => i)
+  const picks = new Map()
+  for (let n = 0; n < count && columns.length > 0; n++) {
+    const column = columns.splice(Math.floor(rng() * columns.length), 1)[0]
+    const rowCount = categories[column].clues.length
+    const row = rowCount > 1 ? 1 + Math.floor(rng() * (rowCount - 1)) : 0
+    picks.set(column, row)
+  }
+  return categories.map((cat, ci) => ({
+    ...cat,
+    clues: cat.clues.map((clue, ri) => ({
+      ...clue,
+      dailyDouble: picks.get(ci) === ri,
+    })),
+  }))
 }

@@ -1,6 +1,13 @@
-import { createInitialBoard, getCell, markClueResolved } from '../game/board.js'
-import { getClueAmounts } from '../game/scoring.js'
-import { nextTeamIndex, normalizeTeamIndex } from '../game/turns.js'
+import {
+  allCluesResolved,
+  assignDailyDoubles,
+  createInitialBoard,
+  getCell,
+  highestClueValue,
+  markClueResolved,
+} from '../game/board.js'
+import { canPlayFinal, clampDailyDoubleWager, clampFinalWager } from '../game/scoring.js'
+import { lowestScoreIndex, normalizeTeamIndex } from '../game/turns.js'
 
 let teamIdCounter = 1
 
@@ -10,42 +17,78 @@ export function createTeamId() {
 
 export const initialGameState = {
   title: '',
+  // { jeopardy, doubleJeopardy | null, finalJeopardy | null } — pristine data used for resets
+  source: null,
   board: null,
-  spinnerEvents: [],
+  round: null, // 'jeopardy' | 'double'
+  phase: 'board', // 'board' | 'final-wager' | 'final-clue' | 'over'
   importWarnings: [],
   teams: [],
-  activeTeamIndex: 0,
+  activeTeamIndex: 0, // the team in control of the board
+  // { categoryIndex, rowIndex, stage: 'wager' | 'clue', wager, lockedOut: [teamId], revealed }
   selectedClue: null,
-  activeClueHintUsed: false,
-  answerRevealed: false,
-  lastSpinResult: null,
+  finalWagers: {},
+  finalResults: {},
+  finalRevealed: false,
+}
+
+function buildBoard(categories, title) {
+  const board = createInitialBoard(categories)
+  board.title = title
+  return board
+}
+
+function startGame(state, source) {
+  return {
+    ...state,
+    source,
+    board: buildBoard(source.jeopardy, state.title),
+    round: 'jeopardy',
+    phase: 'board',
+    teams: state.teams.map((t) => ({ ...t, score: 0 })),
+    activeTeamIndex: normalizeTeamIndex(state.teams.length, 0),
+    selectedClue: null,
+    finalWagers: {},
+    finalResults: {},
+    finalRevealed: false,
+  }
+}
+
+export function finalists(teams) {
+  return teams.filter((t) => canPlayFinal(t.score))
+}
+
+function resolveSelected(state, result, teams, activeTeamIndex) {
+  const { categoryIndex, rowIndex } = state.selectedClue
+  return {
+    ...state,
+    teams,
+    board: markClueResolved(state.board, categoryIndex, rowIndex, result),
+    selectedClue: null,
+    activeTeamIndex,
+  }
 }
 
 export function gameReducer(state, action) {
   switch (action.type) {
     case 'IMPORT_BOARD': {
       const { boardData } = action
-      const board = createInitialBoard(boardData.categories)
-      board.title = boardData.title
-      return {
-        ...state,
-        title: boardData.title,
-        board,
-        spinnerEvents: boardData.spinnerEvents ?? [],
-        importWarnings: action.warnings ?? [],
-        selectedClue: null,
-        activeClueHintUsed: false,
-        answerRevealed: false,
-        lastSpinResult: null,
+      const source = {
+        jeopardy: assignDailyDoubles(boardData.categories, 1),
+        doubleJeopardy: boardData.doubleJeopardy
+          ? assignDailyDoubles(boardData.doubleJeopardy, 2)
+          : null,
+        finalJeopardy: boardData.finalJeopardy ?? null,
       }
+      return startGame(
+        { ...state, title: boardData.title, importWarnings: action.warnings ?? [] },
+        source,
+      )
     }
 
     case 'ADD_TEAM': {
       const name = action.name?.trim() || `Team ${state.teams.length + 1}`
-      const teams = [
-        ...state.teams,
-        { id: createTeamId(), name, score: 0 },
-      ]
+      const teams = [...state.teams, { id: createTeamId(), name, score: 0 }]
       return {
         ...state,
         teams,
@@ -66,6 +109,7 @@ export function gameReducer(state, action) {
       return { ...state, teams }
     }
 
+    // Host override: hand the board to another team.
     case 'SET_ACTIVE_TEAM': {
       return {
         ...state,
@@ -73,15 +117,11 @@ export function gameReducer(state, action) {
       }
     }
 
-    case 'NEXT_TEAM': {
-      return {
-        ...state,
-        activeTeamIndex: nextTeamIndex(state.teams.length, state.activeTeamIndex),
-      }
-    }
-
     case 'SELECT_CLUE': {
-      if (!state.board || state.teams.length === 0) {
+      if (!state.board || state.phase !== 'board' || state.selectedClue) {
+        return state
+      }
+      if (state.teams.length === 0) {
         return state
       }
       const cell = getCell(state.board, action.categoryIndex, action.rowIndex)
@@ -93,123 +133,158 @@ export function gameReducer(state, action) {
         selectedClue: {
           categoryIndex: action.categoryIndex,
           rowIndex: action.rowIndex,
+          stage: cell.dailyDouble ? 'wager' : 'clue',
+          wager: null,
+          lockedOut: [],
+          revealed: false,
         },
-        activeClueHintUsed: false,
-        answerRevealed: false,
       }
     }
 
+    // Backing out is only fair before anyone has been penalised.
     case 'CLOSE_CLUE': {
-      return {
-        ...state,
-        selectedClue: null,
-        activeClueHintUsed: false,
-        answerRevealed: false,
+      const sel = state.selectedClue
+      if (!sel || sel.lockedOut.length > 0 || sel.wager !== null) {
+        return state
       }
+      return { ...state, selectedClue: null }
     }
 
-    case 'REQUEST_HINT': {
-      if (!state.selectedClue || state.activeClueHintUsed) {
+    case 'SET_WAGER': {
+      const sel = state.selectedClue
+      if (!sel || sel.stage !== 'wager') {
         return state
       }
-      const cell = getCell(
-        state.board,
-        state.selectedClue.categoryIndex,
-        state.selectedClue.rowIndex,
-      )
-      if (!cell?.hint) {
-        return state
-      }
-      return { ...state, activeClueHintUsed: true }
+      const team = state.teams[state.activeTeamIndex]
+      const wager = clampDailyDoubleWager(action.amount, team.score, highestClueValue(state.board))
+      return { ...state, selectedClue: { ...sel, stage: 'clue', wager } }
     }
 
     case 'REVEAL_ANSWER': {
-      return { ...state, answerRevealed: true }
+      if (!state.selectedClue) {
+        return state
+      }
+      return { ...state, selectedClue: { ...state.selectedClue, revealed: true } }
     }
 
-    case 'RESOLVE_CLUE': {
-      if (!state.selectedClue || !state.board || state.teams.length === 0) {
+    // Host judges one team's response. Regular clues stay open after a miss so others can try.
+    case 'ANSWER_CLUE': {
+      const sel = state.selectedClue
+      if (!sel || sel.stage !== 'clue') {
         return state
       }
-      const { categoryIndex, rowIndex } = state.selectedClue
-      const cell = getCell(state.board, categoryIndex, rowIndex)
-      if (!cell) {
+      const isDailyDouble = sel.wager !== null
+      const teamIndex = state.teams.findIndex((t) => t.id === action.teamId)
+      if (teamIndex === -1 || sel.lockedOut.includes(action.teamId)) {
         return state
       }
-
-      const { win, loss } = getClueAmounts(cell.value, state.activeClueHintUsed)
-      const delta = action.correct ? win : -loss
-      const activeIndex = state.activeTeamIndex
-
-      const teams = state.teams.map((team, i) =>
-        i === activeIndex ? { ...team, score: team.score + delta } : team,
+      if (isDailyDouble && teamIndex !== state.activeTeamIndex) {
+        return state
+      }
+      const cell = getCell(state.board, sel.categoryIndex, sel.rowIndex)
+      const amount = isDailyDouble ? sel.wager : cell.value
+      const delta = action.correct ? amount : -amount
+      const teams = state.teams.map((t, i) =>
+        i === teamIndex ? { ...t, score: t.score + delta } : t,
       )
 
-      const board = markClueResolved(
-        state.board,
-        categoryIndex,
-        rowIndex,
-        action.correct ? 'correct' : 'incorrect',
-      )
-
-      return {
-        ...state,
-        teams,
-        board,
-        selectedClue: null,
-        activeClueHintUsed: false,
-        answerRevealed: false,
-        activeTeamIndex: nextTeamIndex(teams.length, activeIndex),
+      if (action.correct) {
+        return resolveSelected(state, 'correct', teams, teamIndex)
       }
+      if (isDailyDouble) {
+        return resolveSelected(state, 'incorrect', teams, state.activeTeamIndex)
+      }
+      const lockedOut = [...sel.lockedOut, action.teamId]
+      if (lockedOut.length >= teams.length) {
+        return resolveSelected(state, 'none', teams, state.activeTeamIndex)
+      }
+      return { ...state, teams, selectedClue: { ...sel, lockedOut } }
     }
 
-    case 'RESET_GAME': {
-      if (!state.board) {
-        return { ...state, lastSpinResult: null }
-      }
-      const categories = state.board.categories.map((cat, ci) => ({
-        name: cat.name,
-        clues: state.board.cells
-          .filter((c) => c.categoryIndex === ci)
-          .sort((a, b) => a.rowIndex - b.rowIndex)
-          .map((c) => ({
-            value: c.value,
-            clue: c.clue,
-            answer: c.answer,
-            hint: c.hint ?? undefined,
-          })),
-      }))
-      const board = createInitialBoard(categories)
-      board.title = state.board.title
-      const teams = state.teams.map((t) => ({ ...t, score: 0 }))
-      return {
-        ...state,
-        board,
-        teams,
-        activeTeamIndex: normalizeTeamIndex(teams.length, 0),
-        selectedClue: null,
-        activeClueHintUsed: false,
-        answerRevealed: false,
-        lastSpinResult: null,
-      }
-    }
-
-    case 'SPIN': {
-      if (!state.spinnerEvents.length) {
+    // Nobody got it (or time ran out): reveal and move on, control unchanged.
+    case 'PASS_CLUE': {
+      const sel = state.selectedClue
+      if (!sel || sel.stage !== 'clue' || sel.wager !== null) {
         return state
       }
-      const index = Math.floor(Math.random() * state.spinnerEvents.length)
+      return resolveSelected(state, 'none', state.teams, state.activeTeamIndex)
+    }
+
+    case 'ADVANCE_ROUND': {
+      if (state.phase !== 'board' || state.selectedClue || !allCluesResolved(state.board)) {
+        return state
+      }
+      if (state.round === 'jeopardy' && state.source?.doubleJeopardy) {
+        return {
+          ...state,
+          round: 'double',
+          board: buildBoard(state.source.doubleJeopardy, state.title),
+          // The team in last place chooses first.
+          activeTeamIndex: lowestScoreIndex(state.teams),
+        }
+      }
+      if (state.source?.finalJeopardy && finalists(state.teams).length > 0) {
+        return { ...state, phase: 'final-wager', finalWagers: {}, finalResults: {} }
+      }
+      return { ...state, phase: 'over' }
+    }
+
+    case 'SET_FINAL_WAGER': {
+      if (state.phase !== 'final-wager') {
+        return state
+      }
+      const team = state.teams.find((t) => t.id === action.teamId)
+      if (!team || !canPlayFinal(team.score)) {
+        return state
+      }
       return {
         ...state,
-        lastSpinResult: {
-          index,
-          label: state.spinnerEvents[index],
+        finalWagers: {
+          ...state.finalWagers,
+          [team.id]: clampFinalWager(action.amount, team.score),
         },
       }
     }
 
-    case 'CLEAR_SPIN': {
-      return { ...state, lastSpinResult: null }
+    case 'START_FINAL_CLUE': {
+      if (state.phase !== 'final-wager') {
+        return state
+      }
+      return { ...state, phase: 'final-clue', finalRevealed: false }
+    }
+
+    case 'REVEAL_FINAL': {
+      if (state.phase !== 'final-clue') {
+        return state
+      }
+      return { ...state, finalRevealed: true }
+    }
+
+    case 'JUDGE_FINAL': {
+      if (state.phase !== 'final-clue' || !state.finalRevealed) {
+        return state
+      }
+      const team = state.teams.find((t) => t.id === action.teamId)
+      if (!team || !canPlayFinal(team.score) || team.id in state.finalResults) {
+        return state
+      }
+      const wager = state.finalWagers[team.id] ?? 0
+      const delta = action.correct ? wager : -wager
+      const teams = state.teams.map((t) =>
+        t.id === team.id ? { ...t, score: t.score + delta } : t,
+      )
+      const finalResults = { ...state.finalResults, [team.id]: action.correct }
+      const judgedAll = state.teams
+        .filter((t) => t.id in finalResults || canPlayFinal(t.score))
+        .every((t) => t.id in finalResults)
+      return { ...state, teams, finalResults, phase: judgedAll ? 'over' : state.phase }
+    }
+
+    case 'RESET_GAME': {
+      if (!state.source) {
+        return state
+      }
+      return startGame(state, state.source)
     }
 
     case 'HYDRATE': {
