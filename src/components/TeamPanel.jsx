@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useGame } from '../context/GameProvider.jsx'
+import { formatMoney } from '../game/scoring.js'
 
 function TrashIcon() {
   return (
@@ -16,9 +17,12 @@ function TrashIcon() {
   )
 }
 
+const STEPS = [100, 200, 500, 1000]
+
 export function TeamPanel() {
   const { state, dispatch } = useGame()
   const [newTeamName, setNewTeamName] = useState('')
+  const [step, setStep] = useState(STEPS[0])
 
   function addTeam(e) {
     e.preventDefault()
@@ -42,6 +46,20 @@ export function TeamPanel() {
         />
         <button type="submit">+</button>
       </form>
+
+      <div className="step-picker" role="group" aria-label="Points per click">
+        {STEPS.map((n) => (
+          <button
+            key={n}
+            type="button"
+            className={n === step ? 'step-chip selected' : 'step-chip secondary'}
+            aria-pressed={n === step}
+            onClick={() => setStep(n)}
+          >
+            {n}
+          </button>
+        ))}
+      </div>
 
       <ul className="team-list">
         {state.teams.map((team, index) => {
@@ -85,7 +103,9 @@ export function TeamPanel() {
                     <TrashIcon />
                   </button>
                 </div>
-                <div className="team-score">${team.score.toLocaleString()}</div>
+                <div className="team-score" data-negative={team.score < 0}>
+                  {formatMoney(team.score)}
+                </div>
                 {((team.bonusTokens ?? 0) > 0 || (team.powerups?.length ?? 0) > 0) && (
                   <div className="team-bonus-meta">
                     {(team.bonusTokens ?? 0) > 0 && (
@@ -98,6 +118,24 @@ export function TeamPanel() {
                     )}
                   </div>
                 )}
+              </div>
+              <div className="score-buttons">
+                <button
+                  type="button"
+                  className="danger"
+                  aria-label={`Subtract ${step} from ${team.name}`}
+                  onClick={() => dispatch({ type: 'ADJUST_SCORE', teamId: team.id, delta: -step })}
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  className="success"
+                  aria-label={`Add ${step} to ${team.name}`}
+                  onClick={() => dispatch({ type: 'ADJUST_SCORE', teamId: team.id, delta: step })}
+                >
+                  +
+                </button>
               </div>
             </li>
           )

@@ -275,3 +275,22 @@ describe('RESET_GAME', () => {
     expect(state.round).toBe('jeopardy')
   })
 })
+
+describe('shop', () => {
+  it('charges the team in control when they buy an item', () => {
+    let state = playableState()
+    state = { ...state, teams: [{ ...state.teams[0], score: 500 }, ...state.teams.slice(1)] }
+    state = gameReducer(state, { type: 'BUY_SHOP_ITEM', itemId: 'blackjack' })
+    expect(state.teams[0].score).toBe(400)
+  })
+
+  it('refuses a purchase the team cannot afford', () => {
+    const state = playableState()
+    expect(gameReducer(state, { type: 'BUY_SHOP_ITEM', itemId: 'blackjack' })).toBe(state)
+  })
+
+  it('applies a mini game payout to the named team', () => {
+    const state = gameReducer(playableState(), { type: 'ADJUST_SCORE', teamId: '2', delta: -200 })
+    expect(state.teams.find((t) => t.id === '2').score).toBe(-200)
+  })
+})

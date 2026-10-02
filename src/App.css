@@ -20,7 +20,7 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 270px) minmax(0, 1fr);
   gap: 0.4rem;
   align-items: stretch;
 }
@@ -1097,4 +1097,261 @@
     grid-column: auto;
     width: 100%;
   }
+}
+
+/* Shop + Blackjack */
+.shop-popup {
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+.shop-header {
+  margin-bottom: 1rem;
+}
+
+.shop-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-shadow: 3px 4px 0 rgba(0, 0, 0, 0.85);
+}
+
+.shop-balance {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.shop-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: min(640px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid var(--panel-border);
+  text-align: left;
+}
+
+.shop-item h3 {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.shop-item p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.bj-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: min(640px, 100%);
+}
+
+.bj-team {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.bj-hand h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bj-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 7rem;
+}
+
+.bj-card {
+  width: 4.5rem;
+  height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #111;
+  border-radius: 6px;
+  border: 2px solid #000;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.bj-card.red {
+  color: #c0392b;
+}
+
+.bj-card-rank {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.bj-card-suit {
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.bj-card-back {
+  background: repeating-linear-gradient(45deg, #0b1aa8, #0b1aa8 6px, #060c6e 6px, #060c6e 12px);
+  border-color: #fff;
+}
+
+.bj-actions,
+.bj-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.bj-actions {
+  flex-direction: row;
+}
+
+.bj-message {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+}
+
+.bj-delta {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+}
+
+.bj-result[data-outcome='win'] .bj-delta {
+  color: #5ddf8a;
+}
+
+.bj-result[data-outcome='lose'] .bj-delta {
+  color: #ff4d4d;
+}
+
+/* Team cards */
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.team-list > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.team-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 0.65rem;
+  background: linear-gradient(180deg, #0b1aa8 0%, #060c6e 100%);
+  border: 3px solid #1d27c4;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.team-card.active {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.5);
+}
+
+.team-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.team-name-input {
+  min-width: 0;
+  padding: 0.15rem 0.25rem;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.active-badge {
+  color: var(--gold-bright);
+  font-size: 0.9rem;
+}
+
+.trash-button {
+  display: flex;
+  padding: 0.2rem;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.team-score {
+  padding: 0.25rem 0.4rem;
+  background: #02031f;
+  text-align: center;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  font-size: clamp(1.8rem, 5vh, 2.6rem);
+  line-height: 1.15;
+}
+
+.team-score[data-negative='true'] {
+  color: #ff4d4d;
+}
+
+.score-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.score-buttons button {
+  padding: 0.2rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.step-picker {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.step-chip {
+  flex: 1;
+  padding: 0.25rem 0;
+  font-size: 0.72rem;
+}
+
+.step-chip.selected {
+  outline: 2px solid #fff;
 }
