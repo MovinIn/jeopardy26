@@ -14,7 +14,7 @@ export function ShopButton() {
         onClick={() => setOpen(true)}
         disabled={state.teams.length === 0}
         aria-label="Open shop"
-        title="Shop: buy mini games"
+        title="Shop: gamble on mini games"
       >
         <span className="spinner-compact-wheel" aria-hidden="true">
           $

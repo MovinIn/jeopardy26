@@ -1,25 +1,26 @@
 import { useState } from 'react'
 import { useGame } from '../../context/GameProvider.jsx'
 import { formatMoney } from '../../game/scoring.js'
-import { SHOP_ITEMS, canAfford } from '../../game/shop.js'
+import { SHOP_ITEMS, getShopItem, wagerLimit } from '../../game/shop.js'
 import { BlackjackGame } from './BlackjackGame.jsx'
+import { RouletteGame } from './RouletteGame.jsx'
+import { SlotsGame } from './SlotsGame.jsx'
 
-const GAMES = { blackjack: BlackjackGame }
+const GAMES = { blackjack: BlackjackGame, roulette: RouletteGame, slots: SlotsGame }
 
 export function ShopModal({ onClose }) {
   const { state, dispatch } = useGame()
-  const activeTeam = state.teams[state.activeTeamIndex]
-  // { itemId, team } — the team is captured at purchase so the payout can't land on someone else.
+  // Defaults to the team in control, but the host can pick any team to gamble.
+  const [pickedTeamId, setPickedTeamId] = useState(null)
+  // { itemId, teamId } — the team is locked in when play starts so winnings can't land elsewhere.
   const [playing, setPlaying] = useState(null)
 
-  const Game = playing ? GAMES[playing.itemId] : null
-  // Read the live score so the header updates when the hand ends.
-  const playingTeam = playing ? state.teams.find((t) => t.id === playing.team.id) : null
+  const selectedId = pickedTeamId ?? state.teams[state.activeTeamIndex]?.id
+  const selectedTeam = state.teams.find((t) => t.id === selectedId) ?? state.teams[0]
+  const playingTeam = playing ? state.teams.find((t) => t.id === playing.teamId) : null
+  const shownTeam = playingTeam ?? selectedTeam
 
-  function buy(item) {
-    dispatch({ type: 'BUY_SHOP_ITEM', itemId: item.id })
-    setPlaying({ itemId: item.id, team: activeTeam })
-  }
+  const Game = playing ? GAMES[playing.itemId] : null
 
   return (
     <div className="spinner-popup-backdrop" role="presentation" onClick={onClose}>
@@ -36,35 +37,71 @@ export function ShopModal({ onClose }) {
 
         <header className="shop-header">
           <h2 className="shop-title">Shop</h2>
-          {(playingTeam ?? activeTeam) && (
+          {shownTeam && (
             <p className="shop-balance">
-              {(playingTeam ?? activeTeam).name}: <strong>{formatMoney((playingTeam ?? activeTeam).score)}</strong>
+              {shownTeam.name}: <strong>{formatMoney(shownTeam.score)}</strong>
             </p>
           )}
         </header>
 
         {Game ? (
           <Game
-            team={playing.team}
+            team={playingTeam}
+            item={getShopItem(playing.itemId)}
             onScore={(delta) =>
-              delta !== 0 && dispatch({ type: 'ADJUST_SCORE', teamId: playing.team.id, delta })
+              delta !== 0 && dispatch({ type: 'ADJUST_SCORE', teamId: playing.teamId, delta })
             }
             onExit={() => setPlaying(null)}
           />
         ) : (
-          <ul className="shop-items">
-            {SHOP_ITEMS.map((item) => (
-              <li key={item.id} className="shop-item">
-                <div>
-                  <h3>{item.name}</h3>
-                  <p>{item.description}</p>
-                </div>
-                <button type="button" disabled={!canAfford(activeTeam, item)} onClick={() => buy(item)}>
-                  Buy {formatMoney(item.price)}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <>
+            <div className="team-select" role="group" aria-label="Team that is gambling">
+              <p className="team-select-label">Who is gambling?</p>
+              <div className="team-select-chips">
+                {state.teams.map((team) => (
+                  <button
+                    key={team.id}
+                    type="button"
+                    className={team.id === selectedTeam.id ? 'team-chip selected' : 'team-chip secondary'}
+                    aria-pressed={team.id === selectedTeam.id}
+                    onClick={() => setPickedTeamId(team.id)}
+                  >
+                    <span className="team-chip-name">{team.name}</span>
+                    <span className="team-chip-score" data-negative={team.score < 0}>
+                      {formatMoney(team.score)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <ul className="shop-items">
+              {SHOP_ITEMS.map((item) => {
+                const limit = wagerLimit(item, selectedTeam.score)
+                const canPlay = limit >= item.minWager
+                return (
+                  <li key={item.id} className="shop-item">
+                    <div>
+                      <h3>{item.name}</h3>
+                      <p>{item.description}</p>
+                      <p className="shop-item-range">
+                        {canPlay
+                          ? `Wager ${formatMoney(item.minWager)} to ${formatMoney(limit)}`
+                          : `${selectedTeam.name} needs at least ${formatMoney(item.minWager)} to play`}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={!canPlay}
+                      onClick={() => setPlaying({ itemId: item.id, teamId: selectedTeam.id })}
+                    >
+                      Play
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </>
         )}
       </div>
     </div>

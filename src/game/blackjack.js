@@ -1,5 +1,3 @@
-export const BLACKJACK_STAKE = 200
-
 const SUITS = ['♠', '♥', '♦', '♣']
 const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 
@@ -114,12 +112,13 @@ export function stand(game) {
   return compare(current)
 }
 
-export function scoreDelta(outcome) {
+/** Points won or lost on a hand: the wager, gained on a win and lost on a loss. */
+export function scoreDelta(outcome, wager) {
   if (outcome === 'win') {
-    return BLACKJACK_STAKE
+    return wager
   }
   if (outcome === 'lose') {
-    return -BLACKJACK_STAKE
+    return -wager
   }
   return 0
 }

@@ -7,7 +7,6 @@ import {
   markClueResolved,
 } from '../game/board.js'
 import { canPlayFinal, clampDailyDoubleWager, clampFinalWager } from '../game/scoring.js'
-import { canAfford, getShopItem } from '../game/shop.js'
 import { createDefaultTeams } from '../game/teams.js'
 import { computeBankedTokens } from '../game/bonusRound.js'
 import { lowestScoreIndex, nextTeamIndex, normalizeTeamIndex } from '../game/turns.js'
@@ -143,21 +142,6 @@ export function gameReducer(state, action) {
         }
       })
       return { ...state, teams }
-    }
-
-    // The team in control buys a shop item; its price comes straight off their score.
-    case 'BUY_SHOP_ITEM': {
-      const item = getShopItem(action.itemId)
-      const team = state.teams[state.activeTeamIndex]
-      if (!canAfford(team, item)) {
-        return state
-      }
-      return {
-        ...state,
-        teams: state.teams.map((t) =>
-          t.id === team.id ? { ...t, score: t.score - item.price } : t,
-        ),
-      }
     }
 
     case 'ADJUST_SCORE': {

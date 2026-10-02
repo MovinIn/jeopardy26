@@ -85,9 +85,9 @@ describe('stand', () => {
 })
 
 describe('scoreDelta', () => {
-  it('is +200 for a win, -200 for a loss, 0 for a push', () => {
-    expect(scoreDelta('win')).toBe(200)
-    expect(scoreDelta('lose')).toBe(-200)
-    expect(scoreDelta('push')).toBe(0)
+  it('wins the wager, loses the wager, or breaks even on a push', () => {
+    expect(scoreDelta('win', 300)).toBe(300)
+    expect(scoreDelta('lose', 300)).toBe(-300)
+    expect(scoreDelta('push', 300)).toBe(0)
   })
 })
