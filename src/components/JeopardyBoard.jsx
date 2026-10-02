@@ -10,7 +10,7 @@ export function JeopardyBoard() {
   if (!state.board) {
     return (
       <div className="board-placeholder panel">
-        <p>Load a board JSON file to see the 6×5 grid.</p>
+        <p>Loading board from public/board.json…</p>
       </div>
     )
   }

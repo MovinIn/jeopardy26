@@ -1,0 +1,222 @@
+{
+  "title": "Jeopardy Night",
+  "categories": [
+    {
+      "name": "Science",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "This planet is known as the Red Planet.",
+          "answer": "What is Mars?",
+          "hint": "Fourth rock from the Sun"
+        },
+        {
+          "value": 400,
+          "clue": "H2O is the chemical formula for this.",
+          "answer": "What is water?",
+          "hint": "You drink it daily"
+        },
+        {
+          "value": 600,
+          "clue": "The force that keeps us on the ground.",
+          "answer": "What is gravity?",
+          "hint": "Newton's apple"
+        },
+        {
+          "value": 800,
+          "clue": "The powerhouse of the cell.",
+          "answer": "What is the mitochondria?",
+          "hint": "Meme-famous organelle"
+        },
+        {
+          "value": 1000,
+          "clue": "Einstein's equation links energy and mass.",
+          "answer": "What is E=mc²?",
+          "hint": "Three symbols"
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "A shark terrorizes Amity Island.",
+          "answer": "What is Jaws?",
+          "hint": "Spielberg, 1975"
+        },
+        {
+          "value": 400,
+          "clue": "Luke Skywalker's father.",
+          "answer": "Who is Darth Vader?",
+          "hint": "I am your..."
+        },
+        {
+          "value": 600,
+          "clue": "School of witchcraft and wizardry in Scotland.",
+          "answer": "What is Hogwarts?",
+          "hint": "Harry Potter"
+        },
+        {
+          "value": 800,
+          "clue": "Life is like a box of chocolates.",
+          "answer": "What is Forrest Gump?",
+          "hint": "Tom Hanks on a bench"
+        },
+        {
+          "value": 1000,
+          "clue": "A dream within a dream.",
+          "answer": "What is Inception?",
+          "hint": "Spinning top"
+        }
+      ]
+    },
+    {
+      "name": "Geography",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "Capital of France.",
+          "answer": "What is Paris?",
+          "hint": "City of Light"
+        },
+        {
+          "value": 400,
+          "clue": "Longest river in the world.",
+          "answer": "What is the Nile?",
+          "hint": "Flows through Egypt"
+        },
+        {
+          "value": 600,
+          "clue": "Smallest country in the world.",
+          "answer": "What is Vatican City?",
+          "hint": "Inside Rome"
+        },
+        {
+          "value": 800,
+          "clue": "Country with the most natural lakes.",
+          "answer": "What is Canada?",
+          "hint": "Maple leaf"
+        },
+        {
+          "value": 1000,
+          "clue": "Mount Everest's mountain range.",
+          "answer": "What are the Himalayas?",
+          "hint": "Nepal and Tibet"
+        }
+      ]
+    },
+    {
+      "name": "Music",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "The King of Pop.",
+          "answer": "Who is Michael Jackson?",
+          "hint": "Moonwalk"
+        },
+        {
+          "value": 400,
+          "clue": "Four lads from Liverpool.",
+          "answer": "Who are The Beatles?",
+          "hint": "Abbey Road"
+        },
+        {
+          "value": 600,
+          "clue": "Composer of The Four Seasons.",
+          "answer": "Who is Vivaldi?",
+          "hint": "Italian Baroque"
+        },
+        {
+          "value": 800,
+          "clue": "Sang \"Hello\" and \"Rolling in the Deep\".",
+          "answer": "Who is Adele?",
+          "hint": "British vocalist"
+        },
+        {
+          "value": 1000,
+          "clue": "Mozart's middle name.",
+          "answer": "What is Amadeus?",
+          "hint": "Also a film"
+        }
+      ]
+    },
+    {
+      "name": "Sports",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "You score a touchdown in this sport.",
+          "answer": "What is football?",
+          "hint": "NFL"
+        },
+        {
+          "value": 400,
+          "clue": "Players on court per basketball team.",
+          "answer": "What is five?",
+          "hint": "One hand's worth"
+        },
+        {
+          "value": 600,
+          "clue": "Tournament held at Wimbledon.",
+          "answer": "What is tennis?",
+          "hint": "Love means zero"
+        },
+        {
+          "value": 800,
+          "clue": "Most FIFA World Cup wins.",
+          "answer": "What is Brazil?",
+          "hint": "South America"
+        },
+        {
+          "value": 1000,
+          "clue": "Michael Jordan's primary NBA team.",
+          "answer": "What are the Chicago Bulls?",
+          "hint": "Windy City"
+        }
+      ]
+    },
+    {
+      "name": "Pop Culture",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "Mario's brother in green.",
+          "answer": "Who is Luigi?",
+          "hint": "Plumber"
+        },
+        {
+          "value": 400,
+          "clue": "Streaming service with Stranger Things.",
+          "answer": "What is Netflix?",
+          "hint": "Red N"
+        },
+        {
+          "value": 600,
+          "clue": "Blue bird app now called X.",
+          "answer": "What is Twitter?",
+          "hint": "Elon"
+        },
+        {
+          "value": 800,
+          "clue": "K-pop group with Jungkook and RM.",
+          "answer": "Who is BTS?",
+          "hint": "Army"
+        },
+        {
+          "value": 1000,
+          "clue": "221B Baker Street detective.",
+          "answer": "Who is Sherlock Holmes?",
+          "hint": "Elementary"
+        }
+      ]
+    }
+  ],
+  "spinnerEvents": [
+    "Swap scores with another team!",
+    "Double points on your next correct answer!",
+    "Do a victory dance for 10 seconds!",
+    "Pick a teammate for the next clue!",
+    "Placeholder — edit public/board.json"
+  ]
+}

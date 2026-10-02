@@ -8,13 +8,13 @@ describe('App', () => {
     localStorage.clear()
   })
 
-  it('shows host title and import prompt when no board loaded', () => {
+  it('shows four default teams on startup', () => {
     render(
       <GameProvider>
         <App />
       </GameProvider>,
     )
-    expect(screen.getByRole('heading', { level: 1, name: /import a board/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /load sample board/i })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /name for team 1/i })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /name for team 4/i })).toBeInTheDocument()
   })
 })

@@ -7,9 +7,10 @@ import {
   markClueResolved,
 } from '../game/board.js'
 import { canPlayFinal, clampDailyDoubleWager, clampFinalWager } from '../game/scoring.js'
-import { lowestScoreIndex, normalizeTeamIndex } from '../game/turns.js'
+import { createDefaultTeams } from '../game/teams.js'
+import { lowestScoreIndex, nextTeamIndex, normalizeTeamIndex } from '../game/turns.js'
 
-let teamIdCounter = 1
+let teamIdCounter = 5
 
 export function createTeamId() {
   return `team-${teamIdCounter++}`
@@ -23,7 +24,7 @@ export const initialGameState = {
   round: null, // 'jeopardy' | 'double'
   phase: 'board', // 'board' | 'final-wager' | 'final-clue' | 'over'
   importWarnings: [],
-  teams: [],
+  teams: createDefaultTeams(),
   activeTeamIndex: 0, // the team in control of the board
   // { categoryIndex, rowIndex, stage: 'wager' | 'clue', wager, lockedOut: [teamId], revealed }
   selectedClue: null,
@@ -71,7 +72,8 @@ function resolveSelected(state, result, teams, activeTeamIndex) {
 
 export function gameReducer(state, action) {
   switch (action.type) {
-    case 'IMPORT_BOARD': {
+    case 'IMPORT_BOARD':
+    case 'INIT_FROM_FILE': {
       const { boardData } = action
       const source = {
         jeopardy: assignDailyDoubles(boardData.categories, 1),
@@ -80,8 +82,15 @@ export function gameReducer(state, action) {
           : null,
         finalJeopardy: boardData.finalJeopardy ?? null,
       }
+      const teams =
+        state.teams.length > 0 ? state.teams : createDefaultTeams()
       return startGame(
-        { ...state, title: boardData.title, importWarnings: action.warnings ?? [] },
+        {
+          ...state,
+          title: boardData.title,
+          importWarnings: action.warnings ?? [],
+          teams,
+        },
         source,
       )
     }
@@ -114,6 +123,13 @@ export function gameReducer(state, action) {
       return {
         ...state,
         activeTeamIndex: normalizeTeamIndex(state.teams.length, action.index),
+      }
+    }
+
+    case 'NEXT_TEAM': {
+      return {
+        ...state,
+        activeTeamIndex: nextTeamIndex(state.teams.length, state.activeTeamIndex),
       }
     }
 
