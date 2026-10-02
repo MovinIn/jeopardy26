@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { useGame } from '../context/GameProvider.jsx'
+import { play } from '../audio/sfx.js'
 import { ClueText } from './ClueText.jsx'
 import { canPlayFinal, formatMoney } from '../game/scoring.js'
 
@@ -22,6 +24,14 @@ function Standings({ teams }) {
 export function FinalJeopardy() {
   const { state, dispatch } = useGame()
   const final = state.source?.finalJeopardy
+
+  // A fanfare when the game ends and the champion is shown.
+  const gameOver = state.phase === 'over'
+  useEffect(() => {
+    if (gameOver) {
+      play('fanfare')
+    }
+  }, [gameOver])
 
   if (state.phase === 'over' || !final) {
     const top = Math.max(...state.teams.map((t) => t.score))
@@ -74,7 +84,13 @@ export function FinalJeopardy() {
             Sitting out (no positive score): {benched.map((t) => t.name).join(', ')}
           </p>
         )}
-        <button type="button" onClick={() => dispatch({ type: 'START_FINAL_CLUE' })}>
+        <button
+          type="button"
+          onClick={() => {
+            play('ticket')
+            dispatch({ type: 'START_FINAL_CLUE' })
+          }}
+        >
           Reveal the clue
         </button>
       </section>
@@ -89,7 +105,13 @@ export function FinalJeopardy() {
         <ClueText text={final.clue} />
       </p>
       {!state.finalRevealed ? (
-        <button type="button" onClick={() => dispatch({ type: 'REVEAL_FINAL' })}>
+        <button
+          type="button"
+          onClick={() => {
+            play('reveal')
+            dispatch({ type: 'REVEAL_FINAL' })
+          }}
+        >
           Time&apos;s up: reveal response
         </button>
       ) : (
@@ -112,7 +134,10 @@ export function FinalJeopardy() {
                     type="button"
                     className="success"
                     disabled={judged}
-                    onClick={() => dispatch({ type: 'JUDGE_FINAL', teamId: team.id, correct: true })}
+                    onClick={() => {
+                      play('correct')
+                      dispatch({ type: 'JUDGE_FINAL', teamId: team.id, correct: true })
+                    }}
                   >
                     Correct
                   </button>
@@ -120,7 +145,10 @@ export function FinalJeopardy() {
                     type="button"
                     className="danger"
                     disabled={judged}
-                    onClick={() => dispatch({ type: 'JUDGE_FINAL', teamId: team.id, correct: false })}
+                    onClick={() => {
+                      play('wrong')
+                      dispatch({ type: 'JUDGE_FINAL', teamId: team.id, correct: false })
+                    }}
                   >
                     Incorrect
                   </button>

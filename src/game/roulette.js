@@ -33,7 +33,6 @@ export const OUTSIDE_BETS = [
   { id: 'even', label: 'Even', numbers: range(1, 36).filter((n) => n % 2 === 0), multiplier: 1 },
   { id: 'low', label: '1–18', numbers: range(1, 18), multiplier: 1 },
   { id: 'high', label: '19–36', numbers: range(19, 36), multiplier: 1 },
-  { id: 'green', label: 'Green (0)', numbers: [0], multiplier: 35 },
   { id: 'dozen1', label: '1st 12', numbers: range(1, 12), multiplier: 2 },
   { id: 'dozen2', label: '2nd 12', numbers: range(13, 24), multiplier: 2 },
   { id: 'dozen3', label: '3rd 12', numbers: range(25, 36), multiplier: 2 },
@@ -44,24 +43,7 @@ export const OUTSIDE_BETS = [
 
 export const STRAIGHT_MULTIPLIER = 35
 
-export const MIN_RANGE_SIZE = 2
-export const MAX_RANGE_SIZE = 18
-
-/** True-odds profit multiplier for a bet covering `count` pockets (36 / count, minus the stake). */
-export function rangeMultiplier(count) {
-  return Math.floor(36 / count) - 1
-}
-
-/** A custom range must be whole numbers within 1-36 covering 2 to 18 pockets. */
-export function isValidRange(from, to) {
-  if (!Number.isInteger(from) || !Number.isInteger(to) || from < 1 || to > 36 || from > to) {
-    return false
-  }
-  const size = to - from + 1
-  return size >= MIN_RANGE_SIZE && size <= MAX_RANGE_SIZE
-}
-
-/** A bet is { id: 'straight', number }, { id: 'range', from, to } or { id: <outside bet id> }. */
+/** A bet is { id: 'straight', number } or { id: <outside bet id> }. */
 export function resolveBet(bet) {
   if (bet.id === 'straight') {
     return {
@@ -69,15 +51,6 @@ export function resolveBet(bet) {
       label: `Number ${bet.number}`,
       numbers: [bet.number],
       multiplier: STRAIGHT_MULTIPLIER,
-    }
-  }
-  if (bet.id === 'range') {
-    const numbers = range(bet.from, bet.to)
-    return {
-      id: 'range',
-      label: `${bet.from}–${bet.to}`,
-      numbers,
-      multiplier: rangeMultiplier(numbers.length),
     }
   }
   return OUTSIDE_BETS.find((b) => b.id === bet.id)

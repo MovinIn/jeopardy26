@@ -1,5 +1,12 @@
+import { MAX_CATEGORIES, MIN_CATEGORIES } from './boardConfig.js'
+import { SPELLING_CHAOS_ANIMATION } from './spellingChaos.js'
+
 const JEOPARDY_VALUES = new Set([200, 400, 600, 800, 1000])
 const DOUBLE_VALUES = new Set([400, 800, 1200, 1600, 2000])
+// A clue with one of these ids opens a mini game on the board instead of the usual question.
+const KNOWN_MINIGAMES = new Set(['snake', 'flappy', 'tetris', 'typing', 'reaction'])
+// A clue with one of these ids plays an on-screen animation under its question.
+const KNOWN_CLUE_ANIMATIONS = new Set([SPELLING_CHAOS_ANIMATION])
 
 function validateRound(rawCategories, label, standardValues, errors, warnings) {
   if (!Array.isArray(rawCategories)) {
@@ -7,8 +14,10 @@ function validateRound(rawCategories, label, standardValues, errors, warnings) {
     return null
   }
 
-  if (rawCategories.length !== 6) {
-    errors.push(`${label} must have exactly 6 categories (found ${rawCategories.length}).`)
+  if (rawCategories.length < MIN_CATEGORIES || rawCategories.length > MAX_CATEGORIES) {
+    errors.push(
+      `${label} must have ${MIN_CATEGORIES} or ${MAX_CATEGORIES} categories (found ${rawCategories.length}).`,
+    )
   }
 
   const categories = []
@@ -54,7 +63,50 @@ function validateRound(rawCategories, label, standardValues, errors, warnings) {
       if (!answer) {
         errors.push(`${label}: clue ${ri + 1} in "${name}" must have non-empty "answer" text.`)
       }
-      clues.push({ value, clue: clueText, answer, dailyDouble: clue.dailyDouble === true })
+      let image
+      if (clue.image !== undefined) {
+        if (typeof clue.image !== 'string' || !clue.image.trim()) {
+          errors.push(
+            `${label}: clue ${ri + 1} in "${name}" must have a non-empty string "image" when provided.`,
+          )
+        } else {
+          image = clue.image.trim()
+        }
+      }
+      let animation
+      if (clue.animation !== undefined) {
+        if (typeof clue.animation !== 'string' || !clue.animation.trim()) {
+          errors.push(
+            `${label}: clue ${ri + 1} in "${name}" must have a non-empty string "animation" when provided.`,
+          )
+        } else {
+          animation = clue.animation.trim()
+          if (!KNOWN_CLUE_ANIMATIONS.has(animation)) {
+            warnings.push(`${label}: clue ${ri + 1} in "${name}" has unknown animation "${animation}".`)
+          }
+        }
+      }
+      let spellingWord
+      if (clue.spellingWord !== undefined) {
+        if (typeof clue.spellingWord !== 'string' || !clue.spellingWord.trim()) {
+          errors.push(
+            `${label}: clue ${ri + 1} in "${name}" must have a non-empty string "spellingWord" when provided.`,
+          )
+        } else {
+          spellingWord = clue.spellingWord.trim()
+        }
+      }
+      let minigame
+      if (clue.minigame !== undefined) {
+        if (KNOWN_MINIGAMES.has(clue.minigame)) {
+          minigame = clue.minigame
+        } else {
+          warnings.push(
+            `${label}: clue ${ri + 1} in "${name}" has unknown minigame "${clue.minigame}"; it will be played as a normal clue.`,
+          )
+        }
+      }
+      clues.push({ value, clue: clueText, answer, dailyDouble: clue.dailyDouble === true, minigame, image, animation, spellingWord })
     })
 
     categories.push({ name: name || `Category ${ci + 1}`, clues })

@@ -36,6 +36,17 @@ describe('createInitialBoard', () => {
   })
 })
 
+describe('mini game clues', () => {
+  it('carry their game onto the board cell, and other cells have none', () => {
+    const categories = [
+      { name: 'A', clues: [{ value: 200, clue: 'c', answer: 'a', minigame: 'snake' }, { value: 400, clue: 'c', answer: 'a' }] },
+    ]
+    const board = createInitialBoard(categories)
+    expect(board.cells[0].minigame).toBe('snake')
+    expect(board.cells[1].minigame).toBe(null)
+  })
+})
+
 describe('markClueResolved', () => {
   it('marks matching cell resolved with result', () => {
     const board = createInitialBoard(sampleCategories)

@@ -17,7 +17,7 @@ export function ShopButton() {
         title="Shop: gamble on mini games"
       >
         <span className="spinner-compact-wheel" aria-hidden="true">
-          $
+          🎡
         </span>
         <span className="spinner-compact-label">Shop</span>
       </button>

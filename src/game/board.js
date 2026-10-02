@@ -9,6 +9,10 @@ export function createInitialBoard(categories) {
         clue: clueData.clue,
         answer: clueData.answer,
         dailyDouble: Boolean(clueData.dailyDouble),
+        minigame: clueData.minigame ?? null,
+        image: clueData.image ?? null,
+        animation: clueData.animation ?? null,
+        spellingWord: clueData.spellingWord ?? null,
         resolved: false,
         result: null,
       })

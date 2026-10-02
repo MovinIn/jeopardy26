@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "play": "vite build && vite preview",
     "test": "vitest run --pool=forks",
     "test:watch": "vitest"
   },

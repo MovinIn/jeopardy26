@@ -12,6 +12,7 @@ import {
   spinReels,
 } from '../../game/slots.js'
 import { formatMoney } from '../../game/scoring.js'
+import { play } from '../../audio/sfx.js'
 import { wagerLimit } from '../../game/shop.js'
 import { WagerPicker } from './WagerPicker.jsx'
 
@@ -147,8 +148,20 @@ export function SlotsGame({ team, item, onScore, onExit }) {
     }
     const start = performance.now()
     let raf = 0
+    let lastTickAt = 0
+    const stopped = [false, false, false]
 
     function frame(now) {
+      // The ratchet clicks while any reel is still turning, slowing as the last reel winds down.
+      const spinning = REEL_SPIN_MS.findIndex((ms) => now - start < ms)
+      if (spinning !== -1) {
+        const gap = 50 + 130 * Math.min(1, (now - start) / REEL_SPIN_MS[spinning])
+        if (now - lastTickAt >= gap) {
+          lastTickAt = now
+          play('reelTick')
+        }
+      }
+
       let allStopped = true
       stripRefs.current.forEach((strip, i) => {
         const u = Math.min(1, (now - start) / REEL_SPIN_MS[i])
@@ -161,6 +174,9 @@ export function SlotsGame({ team, item, onScore, onExit }) {
         }
         if (u < 1) {
           allStopped = false
+        } else if (!stopped[i]) {
+          stopped[i] = true
+          play('reelStop')
         }
       })
 
@@ -172,6 +188,17 @@ export function SlotsGame({ team, item, onScore, onExit }) {
       pendingRef.current = null
       if (change !== null) {
         onScoreRef.current(change)
+      }
+      const multiplier = evaluate(reels).multiplier
+      if (multiplier >= 3) {
+        play('jackpot')
+      } else if (multiplier > 0) {
+        play('win')
+        play('coin')
+      } else if (multiplier === 0) {
+        play('tick')
+      } else {
+        play('lose')
       }
       setPhase('done')
     }
@@ -186,6 +213,7 @@ export function SlotsGame({ team, item, onScore, onExit }) {
     }
     const landed = spinReels()
     pendingRef.current = payoutFor(landed, wager)
+    play('leverPull')
     setReels(landed)
     setPhase('spinning')
   }

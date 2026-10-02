@@ -2,54 +2,19 @@
   "title": "Game Night Jeopardy",
   "categories": [
     {
-      "name": "Football",
-      "clues": [
-        {
-          "value": 200,
-          "clue": "This NFL team plays home games at Lambeau Field and is famous for the \"Frozen Tundra.\"",
-          "answer": "Who are the Green Bay Packers?",
-          "hint": "Wisconsin's pro team"
-        },
-        {
-          "value": 400,
-          "clue": "UW–Madison's home stadium, where Badger fans \"Jump Around\" at Camp Randall.",
-          "answer": "What is Camp Randall Stadium?",
-          "hint": "Not the Kohl Center"
-        },
-        {
-          "value": 600,
-          "clue": "The trophy awarded to the winner of the NFL's championship game.",
-          "answer": "What is the Vince Lombardi Trophy?",
-          "hint": "Named for a legendary coach"
-        },
-        {
-          "value": 800,
-          "clue": "This Badger legend coached Wisconsin football to three Rose Bowl wins and later served as athletic director.",
-          "answer": "Who is Barry Alvarez?",
-          "hint": "Built the program in the 1990s–2000s"
-        },
-        {
-          "value": 1000,
-          "clue": "In 2010, this quarterback led the Packers to a Super Bowl XLV win over Pittsburgh; he grew up in Wisconsin.",
-          "answer": "Who is Aaron Rodgers?",
-          "hint": "Also played at Cal"
-        }
-      ]
-    },
-    {
       "name": "Bible Knowledge",
       "clues": [
         {
           "value": 200,
-          "clue": "The first book of the Bible, which opens \"In the beginning…\"",
-          "answer": "What is Genesis?",
-          "hint": "Creation and patriarchs"
+          "clue": "This man spent 3 days inside a giant fish.",
+          "answer": "Who is Jonah?",
+          "hint": "Old Testament prophet; a book is named after him"
         },
         {
           "value": 400,
-          "clue": "He built an ark and saved his family and the animals from the flood.",
-          "answer": "Who is Noah?",
-          "hint": "Rainbow covenant"
+          "clue": "My brother tried to curse Israel but kept blessing them instead.",
+          "answer": "Who is Balaam?",
+          "hint": "Talking donkey; book of Numbers; king of Moab"
         },
         {
           "value": 600,
@@ -76,68 +41,75 @@
       "clues": [
         {
           "value": 200,
-          "clue": "Spell the name of the city where Jesus was born.",
-          "answer": "What is B-E-T-H-L-E-H-E-M?",
-          "hint": "Five syllables"
+          "clue": "Spell Paul's signature greeting in all his letters: \"_____ and peace from God our Father...\"",
+          "answer": "What is G-R-A-C-E? (Grace — the missing word)",
+          "hint": "5 letters; Paul opens every epistle with it"
         },
         {
           "value": 400,
-          "clue": "Spell the first name of Moses' brother, who helped lead Israel out of Egypt.",
-          "answer": "What is A-A-R-O-N?",
-          "hint": "High priest"
+          "clue": "Spell the mountaintop experience that James, Peter, and John witnessed with Jesus.",
+          "answer": "What is T-R-A-N-S-F-I-G-U-R-A-T-I-O-N?",
+          "hint": "14 letters; Moses and Elijah appeared"
         },
         {
           "value": 600,
-          "clue": "Spell the theological term for \"study of the end times.\"",
-          "answer": "What is E-S-C-H-A-T-O-L-O-G-Y?",
-          "hint": "Starts with E-S-C"
+          "clue": "Hebrews describes Jesus as the Great High Priest in the order of _____, king of _____. Spell both blanks.",
+          "answer": "What are M-E-L-C-H-I-Z-E-D-E-K and S-A-L-E-M? (Hebrews 5-7)",
+          "hint": "Mysterious king from Genesis 14; his city later became Jerusalem"
         },
         {
           "value": 800,
-          "clue": "Spell the New Testament city where Paul preached on Mars Hill.",
-          "answer": "What is A-T-H-E-N-S?",
-          "hint": "Capital of Greece"
+          "clue": "Spell the two sides of the free will and God's sovereignty debate whose theology is based on flower acronyms.",
+          "answer": "What are C-A-L-V-I-N-I-S-M and A-R-M-I-N-I-A-N-I-S-M?",
+          "hint": "One uses TULIP, the other ROSES (or ACURA); both named after theologians"
         },
         {
           "value": 1000,
-          "clue": "Spell the name of the valley where David fought Goliath.",
-          "answer": "What is E-L-A-H?",
-          "hint": "Valley of ___"
+          "clue": "Count the letters in",
+          "answer": "What is 7?",
+          "hint": "E-Z-E-K-I-E-L is seven letters; the animation adds and removes letters at the end, then bounces the word around the screen.",
+          "animation": "spellingChaos",
+          "spellingWord": "Ezekiel"
         }
       ]
     },
     {
-      "name": "Gambling",
+      "name": "Live Games",
       "clues": [
         {
           "value": 200,
-          "clue": "Host debate: Is gambling good? In Jeopardy form — many churches would say this about games of chance for money.",
-          "answer": "What is sinful or unwise (or \"love of money is a root of evil\")?",
-          "hint": "1 Timothy 6:10 is fair game for discussion"
+          "clue": "Play Snake: collect 10 apples without crashing!",
+          "answer": "What is collecting all 10 apples?",
+          "hint": "Arrow keys or W A S D",
+          "minigame": "snake"
         },
         {
           "value": 400,
-          "clue": "In blackjack, this two-card total beats everything except a natural blackjack.",
-          "answer": "What is 21?",
-          "hint": "Same as the game name"
+          "clue": "Play Flappy Bird: fly through 15 poles without crashing!",
+          "answer": "What is passing all 15 poles?",
+          "hint": "Space bar, up arrow or click to flap",
+          "minigame": "flappy"
         },
         {
           "value": 600,
-          "clue": "The house advantage built into every casino game.",
-          "answer": "What is the vig (or house edge)?",
-          "hint": "Vegas math"
+          "clue": "Play the typing test: type 40 words at 80 WPM or faster!",
+          "answer": "What is typing at 80 WPM?",
+          "hint": "The clock starts on your first key",
+          "minigame": "typing"
         },
         {
           "value": 800,
-          "clue": "Betting term for a wager on whether the total combined score goes over or under a line.",
-          "answer": "What is the over/under?",
-          "hint": "Not a spread"
+          "clue": "Play Tetris: clear 5 lines before the stack reaches the top!",
+          "answer": "What is clearing 5 lines?",
+          "hint": "Arrow keys to move and rotate, space to drop",
+          "minigame": "tetris"
         },
         {
           "value": 1000,
-          "clue": "In poker, five cards in sequence, all the same suit.",
-          "answer": "What is a straight flush?",
-          "hint": "Better than a full house"
+          "clue": "Play the reaction test: only press when the screen flashes PINK!",
+          "answer": "What is reacting in under 350 ms?",
+          "hint": "Green or any other colour is a fail. You get 3 tries.",
+          "minigame": "reaction"
         }
       ]
     },
@@ -146,33 +118,35 @@
       "clues": [
         {
           "value": 200,
-          "clue": "What is the value of $2 + 3 \\times 4$ if you follow order of operations?",
-          "answer": "What is 14?",
-          "hint": "Multiply before you add"
+          "clue": "What is $(76 \\times 67 - 67 \\times 76) + 67^2$?",
+          "answer": "What is 4489?",
+          "hint": "The two products cancel"
         },
         {
           "value": 400,
-          "clue": "The area of a circle with radius $r$ is given by \\( \\pi r^2 \\).",
-          "answer": "What is \\( \\pi r^2 \\)?",
-          "hint": "Pi times radius squared"
+          "clue": "A sack holds 3 red balls and 2 blue balls. You draw two balls at random without replacement. What is the probability that both balls drawn are red?",
+          "answer": "What is 3/10 (or 0.3)?",
+          "hint": "Without replacement: multiply sequential probabilities (first draw 3/5, then 2/4).",
+          "image": "/clues/math-400-sack-balls.svg"
         },
         {
           "value": 600,
-          "clue": "Solve for $x$: $2x - 5 = 11$.",
-          "answer": "What is $x = 8$?",
-          "hint": "Add 5, then divide by 2"
+          "clue": "In combinatorics, an ordering of distinct objects is called a ___.",
+          "answer": "What is a permutation?",
+          "hint": "$n$Pr — arrangements without repetition"
         },
         {
           "value": 800,
-          "clue": "Evaluate the definite integral $$\\int_0^2 3x\\,dx$$.",
-          "answer": "What is 6?",
-          "hint": "Antiderivative is $\\frac{3}{2}x^2$"
+          "clue": "How many **squares** and how many **triangles** appear in the figure? (Each triangle side must lie entirely along a drawn line segment.)",
+          "answer": "What are 44 triangles and 10 squares?",
+          "hint": "Squares: four $1\\times1$, the outer $2\\times2$, and the center diamond. Triangles: count by area — $16$ of size $\\frac14$, $12$ of size $\\frac12$, and $8$ of size $1$ (using the grid center). Accept ±5 on each count (squares 5–15, triangles 39–49).",
+          "image": "/clues/math-800-shapes.png"
         },
         {
           "value": 1000,
-          "clue": "In the quadratic formula, the expression under the square root: $b^2 - 4ac$.",
-          "answer": "What is the discriminant?",
-          "hint": "Tells you how many real roots"
+          "clue": "Oh, so you like math? Name every standard Calc 2 integration technique—and while you're at it, find $$\\int x^2 e^x \\, dx.$$",
+          "answer": "What are u-substitution, integration by parts, partial fractions, trigonometric substitution, trigonometric integrals, and improper integrals—and what is $e^x(x^2 - 2x + 2) + C$?",
+          "hint": "LIATE: pick $u = x^2$; you'll need integration by parts twice"
         }
       ]
     },
@@ -181,33 +155,33 @@
       "clues": [
         {
           "value": 200,
-          "clue": "Finish the verse: \"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him…\"",
-          "answer": "What is \"should not perish, but have everlasting life\" (John 3:16)?",
-          "hint": "John 3:16"
+          "clue": "Romans 3:23 — Finish the verse: \"For all have sinned, and come short of…\"",
+          "answer": "What is \"the glory of God\" (Romans 3:23)?",
+          "hint": "KJV; Paul’s letter to Rome — \"all have sinned\""
         },
         {
           "value": 400,
-          "clue": "Finish the verse: \"The Lord is my shepherd; I shall not…\"",
-          "answer": "What is \"want\" (Psalm 23:1)?",
-          "hint": "Psalm 23"
+          "clue": "2 Corinthians 5:17 — Finish the verse: \"Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are…\"",
+          "answer": "What is \"become new\" (2 Corinthians 5:17)?",
+          "hint": "KJV; Paul’s letter to Corinth — new creation in Christ"
         },
         {
           "value": 600,
-          "clue": "Finish the verse: \"Trust in the Lord with all thine heart; and lean not unto thine own…\"",
-          "answer": "What is \"understanding\" (Proverbs 3:5)?",
-          "hint": "Proverbs 3"
+          "clue": "Give me a verse that you've used to cope with suffering.",
+          "answer": "Host judgment: accept any appropriate Scripture the player shares and can briefly explain. Examples: Romans 8:28; 2 Corinthians 1:3–4; Psalm 23; 1 Peter 5:7; James 1:2–4; Isaiah 41:10.",
+          "hint": "Subjective — reward sincere, relevant verses; no single \"right\" reference required"
         },
         {
           "value": 800,
-          "clue": "Finish the verse: \"But they that wait upon the Lord shall renew their strength; they shall mount up with wings as…\"",
-          "answer": "What is \"eagles\" (Isaiah 40:31)?",
-          "hint": "Isaiah 40"
+          "clue": "Jeremiah 29:11 — Finish the verse: \"For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an…\"",
+          "answer": "What is \"expected end\" (Jeremiah 29:11)?",
+          "hint": "KJV; letter to exiles in Babylon — often quoted for hope in hard seasons"
         },
         {
           "value": 1000,
-          "clue": "Finish the verse: \"I can do all things through Christ which…\"",
-          "answer": "What is \"strengtheneth me\" (Philippians 4:13)?",
-          "hint": "Paul's letter to Philippi"
+          "clue": "List 7 verses from NavTMS (max 3 verses per person).",
+          "answer": "Team activity: the team must name 7 distinct NavTMS verses total; no player may contribute more than 3. Host verifies each reference is on the NavTMS list and counts unique verses across the team. Award points when all 7 are valid; partial credit at host discretion.",
+          "hint": "NavTMS — your group’s verse memory set; ask the host if you need the list"
         }
       ]
     }

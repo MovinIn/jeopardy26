@@ -11,6 +11,16 @@ npm run dev
 
 Open the URL shown in the terminal (usually `http://localhost:5173`).
 
+### Running a game night
+
+Use the optimised build instead of the dev server:
+
+```bash
+npm run play
+```
+
+It loads much faster, and it has none of the dev server's live-reload connection. That connection can drop while a tab is in the background, and the dev server then **reloads the whole page** when you switch back, which shows up as a blank screen for a few seconds. (If that ever does happen, the page now shows a loading screen instead of going white, a reload partway through a mini game starts it over for free instead of costing the stake, and Snake, Tetris, the typing test and the reaction test all wait while the tab is hidden.)
+
 ```bash
 npm test
 ```
@@ -20,9 +30,10 @@ npm test
 Import a file or paste JSON. A full example lives at [`public/sample-board.json`](public/sample-board.json).
 
 - `title`: string
-- `categories`: **exactly 6** categories for the Jeopardy! round, each with `name` and **exactly 5** `clues` (`value`, `clue`, `answer`). Standard values are 200–1000.
+- `categories`: **5 or 6** categories for the Jeopardy! round (the board adapts to either), each with `name` and **exactly 5** `clues` (`value`, `clue`, `answer`). Standard values are 200–1000.
 - `doubleJeopardy` (optional): `{ "categories": [...] }` in the same shape, with values 400–2000.
 - `finalJeopardy` (optional): `{ "category", "clue", "answer" }`
+- `minigame` on a clue (optional): `"snake"`, `"flappy"`, `"tetris"`, `"typing"` or `"reaction"` turns that clue into a mini game played on screen by the team in control. They stake the clue's value: win and gain it, lose and drop it. In the sample board these are the $200, $400, $600, $800 and $1,000 clues of **Live Games**. The $1,000 one is a reaction test: press only when the screen flashes pink, in under 350 ms, with three tries and random decoy colours to fool you.
 - `dailyDouble: true` on any clue (optional) pins a Daily Double there. If you flag none in a round, they are hidden at random: 1 in Jeopardy!, 2 in Double Jeopardy!, never in the top row, never in the same column.
 
 ## Rules (as on the show)
@@ -35,7 +46,16 @@ Import a file or paste JSON. A full example lives at [`public/sample-board.json`
 - **Final Jeopardy!**: Only contestants with a positive score play. Each wagers up to their whole score, the clue is revealed, then you judge each response.
 - **Game over**: Final standings and the champion are shown.
 
+- **Tetris ceiling**: In the Tetris mini game the ceiling drops one row every 15 seconds (a solid wall fills the top of the well), so a team can't stall forever. Tune it with `SHRINK_EVERY_MS` in [`src/game/tetris.js`](src/game/tetris.js).
+
 Contestants and scores persist in `localStorage`. **New game** keeps the board and contestants but resets scores and clues.
+
+## Sound effects
+
+- Arcade-style effects play for tile picks, right and wrong answers, the Daily Double, the shop (carnival jingle, card flips, roulette ball clacks, slot reels and jackpots) and every Live Games mini game.
+- They are synthesised in the browser with the Web Audio API, so there are no audio files to add. All recipes live in [`src/audio/sfx.js`](src/audio/sfx.js); `play('coin')` fires one by name.
+- **Sounds on / Sounds off** in the side rail (under the music button) mutes them. It is separate from the music and is remembered in `localStorage` under `jeopardy-sfx-prefs-v1`.
+- Browsers only allow audio after a click or key press, so the first sound plays on your first interaction.
 
 ## Background music
 

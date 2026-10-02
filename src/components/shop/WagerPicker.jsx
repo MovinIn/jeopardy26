@@ -1,8 +1,10 @@
 import { formatMoney } from '../../game/scoring.js'
+import { play } from '../../audio/sfx.js'
 
 /** Slider with -/+ steppers for choosing a wager between min and max. */
 export function WagerPicker({ min, max, step, value, onChange, disabled = false }) {
   function nudge(direction) {
+    play('tick')
     onChange(Math.min(max, Math.max(min, value + direction * step)))
   }
 
@@ -40,7 +42,10 @@ export function WagerPicker({ min, max, step, value, onChange, disabled = false 
         step={step}
         value={value}
         disabled={disabled}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => {
+          play('tick')
+          onChange(Number(e.target.value))
+        }}
         aria-label="Wager"
       />
       <div className="wager-picker-bounds">

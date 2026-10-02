@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
   OUTSIDE_BETS,
-  isValidRange,
-  rangeMultiplier,
   resolveBet,
   POCKET_COUNT,
   POCKET_RADIUS,
@@ -58,19 +56,19 @@ describe('bets', () => {
     expect(byId.even.numbers).not.toContain(0)
   })
 
-  it('never lets the zero win an outside bet, except the green zero itself', () => {
-    for (const bet of OUTSIDE_BETS.filter((b) => b.id !== 'green')) {
+  it('never lets the zero win an outside bet, only a straight bet on 0', () => {
+    for (const bet of OUTSIDE_BETS) {
       expect(betWins({ id: bet.id }, 0)).toBe(false)
     }
-    expect(betWins({ id: 'green' }, 0)).toBe(true)
     expect(betWins({ id: 'straight', number: 0 }, 0)).toBe(true)
   })
 
   it('pays true odds: 36 divided by the pockets covered, minus the stake', () => {
+    const trueOdds = (pockets) => Math.floor(36 / pockets) - 1
     for (const bet of OUTSIDE_BETS) {
-      expect(bet.multiplier).toBe(rangeMultiplier(bet.numbers.length))
+      expect(bet.multiplier).toBe(trueOdds(bet.numbers.length))
     }
-    expect(STRAIGHT_MULTIPLIER).toBe(rangeMultiplier(1))
+    expect(STRAIGHT_MULTIPLIER).toBe(trueOdds(1))
     expect(STRAIGHT_MULTIPLIER).toBe(35)
   })
 
@@ -81,40 +79,13 @@ describe('bets', () => {
     expect([...byId.col1.numbers, ...byId.col2.numbers, ...byId.col3.numbers]).toHaveLength(36)
   })
 
-  it('bets on a custom range of numbers', () => {
-    const bet = { id: 'range', from: 7, to: 12 }
-    expect(resolveBet(bet)).toMatchObject({ label: '7–12', multiplier: 5 })
-    expect(resolveBet(bet).numbers).toEqual([7, 8, 9, 10, 11, 12])
-    expect(betWins(bet, 9)).toBe(true)
-    expect(betWins(bet, 13)).toBe(false)
-    expect(winAmount(bet, 100)).toBe(500)
-    expect(winChance(bet)).toBeCloseTo(6 / 37)
-    expect(payoutFor(bet, 20, 100)).toBe(-100)
-  })
-
-  it('only accepts sensible custom ranges', () => {
-    expect(isValidRange(7, 12)).toBe(true)
-    expect(isValidRange(1, 18)).toBe(true)
-    expect(isValidRange(5, 5)).toBe(false) // one number is a straight bet
-    expect(isValidRange(1, 19)).toBe(false) // would pay nothing
-    expect(isValidRange(0, 5)).toBe(false)
-    expect(isValidRange(30, 37)).toBe(false)
-    expect(isValidRange(12, 7)).toBe(false)
-    expect(isValidRange(1.5, 6)).toBe(false)
-    expect(isValidRange(NaN, 6)).toBe(false)
-  })
-
-  it('never lets a custom range beat the house edge', () => {
-    for (let from = 1; from <= 36; from++) {
-      for (let to = from; to <= 36; to++) {
-        if (!isValidRange(from, to)) {
-          continue
-        }
-        const bet = { id: 'range', from, to }
-        const edge = winChance(bet) * (resolveBet(bet).multiplier + 1) - 1
-        expect(edge).toBeLessThanOrEqual(1e-9)
-      }
-    }
+  it('offers every standard table bet', () => {
+    const ids = OUTSIDE_BETS.map((b) => b.id)
+    expect(ids).toEqual(
+      expect.arrayContaining(['red', 'black', 'odd', 'even', 'low', 'high', 'dozen1', 'dozen2', 'dozen3', 'col1', 'col2', 'col3']),
+    )
+    expect(ids).toHaveLength(12)
+    expect(resolveBet({ id: 'straight', number: 9 }).numbers).toEqual([9])
   })
 
   it('computes win chance and win amount', () => {

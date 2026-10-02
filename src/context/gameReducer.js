@@ -21,13 +21,16 @@ export const initialGameState = {
   title: '',
   // { jeopardy, doubleJeopardy | null, finalJeopardy | null } — pristine data used for resets
   source: null,
+  // Fingerprint of the board file this game was built from (see boardFingerprint).
+  boardFingerprint: null,
   board: null,
   round: null, // 'jeopardy' | 'double'
   phase: 'board', // 'board' | 'final-wager' | 'final-clue' | 'over'
   importWarnings: [],
   teams: createDefaultTeams(),
   activeTeamIndex: 0, // the team in control of the board
-  // { categoryIndex, rowIndex, stage: 'wager' | 'clue', wager, lockedOut: [teamId], revealed }
+  // { categoryIndex, rowIndex, stage: 'wager' | 'clue' | 'minigame', wager, lockedOut: [teamId],
+  //   revealed, minigame, started, result }
   selectedClue: null,
   finalWagers: {},
   finalResults: {},
@@ -88,7 +91,17 @@ function resolveSelected(state, result, teams, activeTeamIndex) {
 export function gameReducer(state, action) {
   switch (action.type) {
     case 'IMPORT_BOARD':
-    case 'INIT_FROM_FILE': {
+    case 'INIT_FROM_FILE':
+    case 'SYNC_BOARD_FILE': {
+      // Loading the page re-reads board.json. A saved game built from the same file carries on;
+      // an edited file replaces the board (and starts a fresh game on it).
+      if (
+        action.type === 'SYNC_BOARD_FILE' &&
+        state.source &&
+        state.boardFingerprint === action.fingerprint
+      ) {
+        return state
+      }
       const { boardData } = action
       const spinnerEvents = boardData.spinnerEvents ?? []
       const slotPowerups = boardData.slotPowerups ?? []
@@ -111,6 +124,7 @@ export function gameReducer(state, action) {
             ...state,
             title: boardData.title,
             importWarnings: action.warnings ?? [],
+            boardFingerprint: action.fingerprint ?? null,
             teams,
           },
           source,
@@ -220,10 +234,14 @@ export function gameReducer(state, action) {
         selectedClue: {
           categoryIndex: action.categoryIndex,
           rowIndex: action.rowIndex,
-          stage: cell.dailyDouble ? 'wager' : 'clue',
+          stage: cell.minigame ? 'minigame' : cell.dailyDouble ? 'wager' : 'clue',
           wager: null,
           lockedOut: [],
           revealed: false,
+          // Mini game clues: which game, whether play has begun, and how it ended.
+          minigame: cell.minigame ?? null,
+          started: false,
+          result: null,
         },
       }
     }
@@ -231,6 +249,10 @@ export function gameReducer(state, action) {
     // Backing out is only fair before anyone has been penalised.
     case 'CLOSE_CLUE': {
       const sel = state.selectedClue
+      if (sel?.stage === 'minigame') {
+        // Once the game has begun the host can't walk away until it has ended.
+        return sel.started && !sel.result ? state : { ...state, selectedClue: null }
+      }
       if (!sel || sel.lockedOut.length > 0 || sel.wager !== null) {
         return state
       }
@@ -295,6 +317,48 @@ export function gameReducer(state, action) {
         return state
       }
       return resolveSelected(state, 'none', state.teams, state.activeTeamIndex)
+    }
+
+    // The page was reloaded (a tab waking up, a browser refresh) in the middle of a mini game. The
+    // game can't be resumed, so it starts over fresh rather than costing the team its stake.
+    case 'RESTART_MINIGAME': {
+      const sel = state.selectedClue
+      if (!sel || sel.stage !== 'minigame' || !sel.started || sel.result) {
+        return state
+      }
+      return { ...state, selectedClue: { ...sel, started: false } }
+    }
+
+    case 'MINIGAME_STARTED': {
+      const sel = state.selectedClue
+      if (!sel || sel.stage !== 'minigame' || sel.started) {
+        return state
+      }
+      return { ...state, selectedClue: { ...sel, started: true } }
+    }
+
+    // The team in control stakes the clue's value: win and gain it, lose and drop it. The clue is
+    // used up either way, and control stays with the team that picked it.
+    case 'FINISH_MINIGAME': {
+      const sel = state.selectedClue
+      if (!sel || sel.stage !== 'minigame' || sel.result) {
+        return state
+      }
+      const cell = getCell(state.board, sel.categoryIndex, sel.rowIndex)
+      const delta = action.won ? cell.value : -cell.value
+      return {
+        ...state,
+        teams: state.teams.map((t, i) =>
+          i === state.activeTeamIndex ? { ...t, score: t.score + delta } : t,
+        ),
+        board: markClueResolved(
+          state.board,
+          sel.categoryIndex,
+          sel.rowIndex,
+          action.won ? 'correct' : 'incorrect',
+        ),
+        selectedClue: { ...sel, started: true, result: action.won ? 'won' : 'lost' },
+      }
     }
 
     case 'ADVANCE_ROUND': {

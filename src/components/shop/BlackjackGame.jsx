@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { handValue, hit, newGame, scoreDelta, stand } from '../../game/blackjack.js'
 import { formatMoney } from '../../game/scoring.js'
+import { play } from '../../audio/sfx.js'
 import { wagerLimit } from '../../game/shop.js'
 import { WagerPicker } from './WagerPicker.jsx'
 
@@ -20,7 +21,10 @@ function Card({ card, faceUp, delay }) {
     if (!faceUp) {
       return undefined
     }
-    const timer = window.setTimeout(() => setFlipped(true), delay)
+    const timer = window.setTimeout(() => {
+      play('card')
+      setFlipped(true)
+    }, delay)
     return () => window.clearTimeout(timer)
   }, [faceUp, delay])
 
@@ -65,7 +69,10 @@ export function BlackjackGame({ team, item, onScore, onExit }) {
   function advance(next) {
     setGame(next)
     if (next.status === 'done') {
-      onScore(scoreDelta(next.outcome, wager))
+      const delta = scoreDelta(next.outcome, wager)
+      onScore(delta)
+      const wait = REVEAL_MS + Math.max(0, next.dealer.length - 1) * DEALER_DRAW_MS + 700
+      window.setTimeout(() => play(delta > 0 ? 'win' : delta < 0 ? 'lose' : 'tick'), wait)
     }
   }
 

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" width="800" height="640" role="img" aria-labelledby="title desc">
+  <title id="title">Sack with 3 red balls and 2 blue balls</title>
+  <desc id="desc">An open drawstring sack containing five balls: three red and two blue.</desc>
+  <defs>
+    <radialGradient id="red" cx="0.36" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#ff8a80"/>
+      <stop offset="0.45" stop-color="#e53935"/>
+      <stop offset="1" stop-color="#a31515"/>
+    </radialGradient>
+    <radialGradient id="blue" cx="0.36" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#82b1ff"/>
+      <stop offset="0.45" stop-color="#1e6fe0"/>
+      <stop offset="1" stop-color="#0b3d91"/>
+    </radialGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c38a4c"/>
+      <stop offset="0.5" stop-color="#e6bb80"/>
+      <stop offset="1" stop-color="#bb8245"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="640" rx="28" fill="#fdf6e3"/>
+
+  <!-- flared top of the sack -->
+  <path d="M332 214 C 300 170, 248 128, 236 86 L 564 86 C 552 128, 500 170, 468 214 Z"
+        fill="url(#cloth)" stroke="#5b3a17" stroke-width="7" stroke-linejoin="round"/>
+  <ellipse cx="400" cy="86" rx="164" ry="26" fill="#4a2e10" stroke="#5b3a17" stroke-width="7"/>
+
+  <!-- sack body -->
+  <path d="M332 214 C 196 252, 112 364, 134 468 C 156 566, 644 566, 666 468 C 688 364, 604 252, 468 214 Z"
+        fill="url(#cloth)" stroke="#5b3a17" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M300 236 C 236 300, 214 400, 244 520" fill="none" stroke="#a8743d" stroke-width="5" stroke-dasharray="14 12"/>
+  <path d="M500 236 C 564 300, 586 400, 556 520" fill="none" stroke="#a8743d" stroke-width="5" stroke-dasharray="14 12"/>
+
+  <!-- drawstring -->
+  <rect x="318" y="200" width="164" height="26" rx="13" fill="#7a4b1c" stroke="#3f260b" stroke-width="5"/>
+  <path d="M478 216 C 500 226, 516 236, 524 256" fill="none" stroke="#7a4b1c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M478 214 C 512 214, 540 222, 558 240" fill="none" stroke="#7a4b1c" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="525" cy="260" r="10" fill="#5b3a17"/>
+  <circle cx="560" cy="243" r="10" fill="#5b3a17"/>
+
+  <!-- balls -->
+  <g stroke-width="5">
+    <circle cx="332" cy="338" r="62" fill="url(#red)" stroke="#6d0b0b"/>
+    <circle cx="468" cy="338" r="62" fill="url(#blue)" stroke="#06275e"/>
+    <circle cx="264" cy="456" r="62" fill="url(#blue)" stroke="#06275e"/>
+    <circle cx="400" cy="466" r="62" fill="url(#red)" stroke="#6d0b0b"/>
+    <circle cx="536" cy="456" r="62" fill="url(#red)" stroke="#6d0b0b"/>
+  </g>
+
+  <!-- legend -->
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="700" fill="#222">
+    <circle cx="236" cy="596" r="22" fill="#e53935" stroke="#6d0b0b" stroke-width="4"/>
+    <text x="272" y="612">3 red</text>
+    <circle cx="474" cy="596" r="22" fill="#1e6fe0" stroke="#06275e" stroke-width="4"/>
+    <text x="510" y="612">2 blue</text>
+  </g>
+</svg>

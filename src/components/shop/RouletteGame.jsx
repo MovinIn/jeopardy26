@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  MAX_RANGE_SIZE,
-  MIN_RANGE_SIZE,
   OUTSIDE_BETS,
   POCKET_STEP,
   STRAIGHT_MULTIPLIER,
@@ -9,7 +7,6 @@ import {
   WHEEL_ORDER,
   betWins,
   colorOf,
-  isValidRange,
   payoutFor,
   resolveBet,
   spinFrame,
@@ -18,6 +15,7 @@ import {
   winChance,
 } from '../../game/roulette.js'
 import { formatMoney } from '../../game/scoring.js'
+import { play } from '../../audio/sfx.js'
 import { wagerLimit } from '../../game/shop.js'
 import { WagerPicker } from './WagerPicker.jsx'
 
@@ -178,95 +176,40 @@ function percent(chance) {
 }
 
 const BET_GROUPS = [
-  { title: 'Colors', ids: ['red', 'black', 'green'] },
+  { title: 'Colors', ids: ['red', 'black'] },
   { title: 'Odd or even', ids: ['odd', 'even'] },
   { title: 'Ranges of numbers', ids: ['low', 'high', 'dozen1', 'dozen2', 'dozen3', 'col1', 'col2', 'col3'] },
 ]
 
 const ZONES = Object.fromEntries(OUTSIDE_BETS.map((zone) => [zone.id, zone]))
 
-function BetRow({ zone, wager, selected, disabled, onSelect }) {
+// The three columns sit at the right of the table, top row first (3, 6, 9...).
+const COLUMN_IDS = ['col3', 'col2', 'col1']
+const DOZEN_IDS = ['dozen1', 'dozen2', 'dozen3']
+// Bottom row of the table: low, even, red, black, odd, high.
+const OUTSIDE_IDS = ['low', 'even', 'red', 'black', 'odd', 'high']
+
+/** A big clickable tile for a zone bet: a diamond for red/black, text for the rest. */
+function BetTile({ id, selected, disabled, onPick, style, className = '', children }) {
+  const zone = ZONES[id]
   return (
     <button
       type="button"
-      className={selected ? 'rl-payout-row selected' : 'rl-payout-row'}
-      aria-pressed={selected}
+      className={`rl-tile ${className} ${selected ? 'picked' : ''}`}
+      style={style}
       disabled={disabled}
-      onClick={onSelect}
+      aria-pressed={selected}
+      aria-label={zone.label}
+      onClick={() => onPick({ id })}
     >
-      <span className="rl-zone-name">
-        {zone.id === 'red' || zone.id === 'black' || zone.id === 'green' ? (
-          <i className={`rl-swatch ${zone.id}`} aria-hidden="true" />
-        ) : null}
-        {zone.label}
-      </span>
-      <span>{percent(winChance(zone))}</span>
-      <span>{zone.multiplier}:1</span>
-      <strong>+{formatMoney(winAmount(zone, wager))}</strong>
+      {children ?? <span className="rl-tile-label">{zone.label}</span>}
+      <small className="rl-tile-pays">{zone.multiplier}:1</small>
     </button>
   )
 }
 
-/** Pick any run of numbers (like 7 to 12); pays true odds for however many it covers. */
-function CustomRange({ wager, selected, disabled, onSelect }) {
-  const [from, setFrom] = useState('7')
-  const [to, setTo] = useState('12')
-  const lo = Number(from)
-  const hi = Number(to)
-  const valid = isValidRange(lo, hi)
-  const bet = valid ? { id: 'range', from: lo, to: hi } : null
-  const zone = bet ? resolveBet(bet) : null
-
-  return (
-    <div className={selected ? 'rl-payout-row custom selected' : 'rl-payout-row custom'}>
-      <span className="rl-range-inputs">
-        <label>
-          From
-          <input
-            type="number"
-            min="1"
-            max="36"
-            value={from}
-            disabled={disabled}
-            onChange={(e) => setFrom(e.target.value)}
-            aria-label="Range from"
-          />
-        </label>
-        <label>
-          to
-          <input
-            type="number"
-            min="1"
-            max="36"
-            value={to}
-            disabled={disabled}
-            onChange={(e) => setTo(e.target.value)}
-            aria-label="Range to"
-          />
-        </label>
-        <button
-          type="button"
-          className="secondary"
-          disabled={disabled || !valid}
-          onClick={() => onSelect(bet)}
-        >
-          Bet range
-        </button>
-      </span>
-      <span>{zone ? percent(winChance(bet)) : '—'}</span>
-      <span>{zone ? `${zone.multiplier}:1` : '—'}</span>
-      <strong>{zone ? `+${formatMoney(winAmount(bet, wager))}` : '—'}</strong>
-      {!valid && (
-        <small className="rl-range-hint">
-          Pick {MIN_RANGE_SIZE} to {MAX_RANGE_SIZE} numbers between 1 and 36.
-        </small>
-      )}
-    </div>
-  )
-}
-
 /** What every zone would pay at the current wager, and how likely it is to hit. */
-function PayoutBoard({ wager, bet, disabled, onSelect }) {
+function PayoutBoard({ wager, bet }) {
   const straight = { id: 'straight', number: 0 }
   return (
     <div className="rl-payouts" aria-label="Payouts for every zone">
@@ -278,7 +221,7 @@ function PayoutBoard({ wager, bet, disabled, onSelect }) {
       </div>
 
       <div className="rl-payout-row static">
-        <span>Single number (tap it on the table)</span>
+        <span>Single number, including 0 (tap it on the table)</span>
         <span>{percent(winChance(straight))}</span>
         <span>{STRAIGHT_MULTIPLIER}:1</span>
         <strong>+{formatMoney(winAmount(straight, wager))}</strong>
@@ -287,32 +230,30 @@ function PayoutBoard({ wager, bet, disabled, onSelect }) {
       {BET_GROUPS.map((group) => (
         <div key={group.title} className="rl-bet-group" role="group" aria-label={group.title}>
           <p className="rl-group-title">{group.title}</p>
-          {group.ids.map((id) => (
-            <BetRow
-              key={id}
-              zone={ZONES[id]}
-              wager={wager}
-              selected={bet?.id === id}
-              disabled={disabled}
-              onSelect={() => onSelect({ id })}
-            />
-          ))}
+          {group.ids.map((id) => {
+            const zone = ZONES[id]
+            return (
+              <div
+                key={id}
+                className={bet?.id === id ? 'rl-payout-row static selected' : 'rl-payout-row static'}
+              >
+                <span className="rl-zone-name">
+                  {id === 'red' || id === 'black' ? (
+                    <i className={`rl-swatch ${id}`} aria-hidden="true" />
+                  ) : null}
+                  {zone.label}
+                </span>
+                <span>{percent(winChance(zone))}</span>
+                <span>{zone.multiplier}:1</span>
+                <strong>+{formatMoney(winAmount(zone, wager))}</strong>
+              </div>
+            )
+          })}
         </div>
       ))}
 
-      <div className="rl-bet-group" role="group" aria-label="Custom range">
-        <p className="rl-group-title">Your own range</p>
-        <CustomRange
-          wager={wager}
-          selected={bet?.id === 'range'}
-          disabled={disabled}
-          onSelect={onSelect}
-        />
-      </div>
-
       <p className="rl-payout-foot">
-        Miss and you lose {formatMoney(wager)}. The zero is green: it only wins on Green (0) or a
-        straight bet on 0.
+        Miss and you lose {formatMoney(wager)}. The green zero only wins on a straight bet on 0.
       </p>
     </div>
   )
@@ -354,6 +295,7 @@ export function RouletteGame({ team, item, onScore, onExit }) {
     }
     const start = performance.now()
     let raf = 0
+    let lastSlot = null
 
     function frame(now) {
       const u = Math.min(1, (now - start) / SPIN_MS)
@@ -365,6 +307,15 @@ export function RouletteGame({ team, item, onScore, onExit }) {
       shadowRef.current?.setAttribute('cx', bx + 2)
       shadowRef.current?.setAttribute('cy', by + 3)
 
+      // Once the ball has dropped into the pockets it clacks over each divider, slower and slower.
+      if (ballRadius < TRACK_RADIUS - 4) {
+        const slot = Math.floor((ballAngle - wheelAngle) / POCKET_STEP)
+        if (lastSlot !== null && slot !== lastSlot) {
+          play('ballTick')
+        }
+        lastSlot = slot
+      }
+
       if (u < 1) {
         raf = requestAnimationFrame(frame)
         return
@@ -373,6 +324,13 @@ export function RouletteGame({ team, item, onScore, onExit }) {
       pendingRef.current = null
       if (change !== null) {
         onScoreRef.current(change)
+      }
+      play('ballLand')
+      if (change !== null && change > 0) {
+        play('win')
+        play('coin')
+      } else {
+        play('lose')
       }
       setPhase('done')
     }
@@ -387,6 +345,7 @@ export function RouletteGame({ team, item, onScore, onExit }) {
     }
     const landed = spinWheel()
     pendingRef.current = payoutFor(bet, landed, wager)
+    play('spinStart')
     setResult(landed)
     setPhase('spinning')
   }
@@ -420,7 +379,7 @@ export function RouletteGame({ team, item, onScore, onExit }) {
             disabled={!picking}
           />
 
-          <div className="rl-felt" aria-label="Pick your number">
+          <div className="rl-felt" role="group" aria-label="Betting table">
             <NumberCell
               n={0}
               picked={bet?.id === 'straight' && bet.number === 0}
@@ -428,21 +387,60 @@ export function RouletteGame({ team, item, onScore, onExit }) {
               onPick={(n) => setBet({ id: 'straight', number: n })}
               className="zero"
             />
-            <div className="rl-grid">
-              {TABLE_ROWS.flat().map((n) => (
-                <NumberCell
-                  key={n}
-                  n={n}
-                  picked={bet?.id === 'straight' && bet.number === n}
-                  covered={Boolean(resolved && bet.id !== 'straight' && resolved.numbers.includes(n))}
-                  disabled={!picking}
-                  onPick={(num) => setBet({ id: 'straight', number: num })}
-                />
-              ))}
-            </div>
+            {TABLE_ROWS.flat().map((n) => (
+              <NumberCell
+                key={n}
+                n={n}
+                picked={bet?.id === 'straight' && bet.number === n}
+                covered={Boolean(resolved && bet.id !== 'straight' && resolved.numbers.includes(n))}
+                disabled={!picking}
+                onPick={(num) => setBet({ id: 'straight', number: num })}
+              />
+            ))}
+
+            {COLUMN_IDS.map((id, row) => (
+              <BetTile
+                key={id}
+                id={id}
+                className="column"
+                style={{ gridColumn: 14, gridRow: row + 1 }}
+                selected={bet?.id === id}
+                disabled={!picking}
+                onPick={setBet}
+              >
+                <span className="rl-tile-label">2 to 1</span>
+              </BetTile>
+            ))}
+
+            {DOZEN_IDS.map((id, i) => (
+              <BetTile
+                key={id}
+                id={id}
+                style={{ gridColumn: `${2 + i * 4} / span 4`, gridRow: 4 }}
+                selected={bet?.id === id}
+                disabled={!picking}
+                onPick={setBet}
+              />
+            ))}
+
+            {OUTSIDE_IDS.map((id, i) => (
+              <BetTile
+                key={id}
+                id={id}
+                className={id === 'red' || id === 'black' ? `diamond-tile ${id}` : ''}
+                style={{ gridColumn: `${2 + i * 2} / span 2`, gridRow: 5 }}
+                selected={bet?.id === id}
+                disabled={!picking}
+                onPick={setBet}
+              >
+                {id === 'red' || id === 'black' ? (
+                  <span className={`rl-diamond ${id}`} aria-hidden="true" />
+                ) : undefined}
+              </BetTile>
+            ))}
           </div>
 
-          <PayoutBoard wager={wager} bet={bet} disabled={!picking} onSelect={setBet} />
+          <PayoutBoard wager={wager} bet={bet} />
 
           {picking && (
             <div className="rl-controls">
@@ -453,7 +451,7 @@ export function RouletteGame({ team, item, onScore, onExit }) {
                     <strong>+{formatMoney(winAmount(bet, wager))}</strong>
                   </>
                 ) : (
-                  'Tap a number or pick a zone'
+                  'Tap a number, a color, or a range on the table'
                 )}
               </p>
               <button type="button" disabled={bet === null} onClick={spin}>

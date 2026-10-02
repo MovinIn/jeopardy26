@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RouletteGame } from './RouletteGame.jsx'
@@ -40,11 +40,11 @@ describe('RouletteGame', () => {
     const board = screen.getByLabelText('Payouts for every zone')
     expect(board).toHaveTextContent('+$1,750') // single number: 35:1 on $50
     expect(board).toHaveTextContent('+$100') // dozen: 2:1 on $50
-    expect(screen.getByRole('button', { name: /^Red/ })).toHaveTextContent('+$50')
+    expect(screen.getByRole('group', { name: 'Colors' })).toHaveTextContent('+$50')
 
     await user.click(screen.getByRole('button', { name: 'Raise wager' }))
     expect(board).toHaveTextContent('+$3,500')
-    expect(screen.getByRole('button', { name: /^1st 12/ })).toHaveTextContent('+$200')
+    expect(screen.getByRole('group', { name: 'Ranges of numbers' })).toHaveTextContent('+$200')
   })
 
   it('pays the single-number profit when the ball lands on it', async () => {
@@ -79,7 +79,7 @@ describe('RouletteGame', () => {
     const onScore = vi.fn()
     const { user } = setup(onScore)
 
-    await user.click(screen.getByRole('button', { name: /^Red/ }))
+    await user.click(screen.getByRole('button', { name: 'Red' }))
     await user.click(screen.getByRole('button', { name: 'Spin' }))
     await finishSpin()
     expect(onScore).toHaveBeenCalledWith(50)
@@ -90,30 +90,59 @@ describe('RouletteGame', () => {
     const onScore = vi.fn()
     const { user } = setup(onScore)
 
-    await user.click(screen.getByRole('button', { name: /^Red/ }))
+    await user.click(screen.getByRole('button', { name: 'Red' }))
     await user.click(screen.getByRole('button', { name: 'Spin' }))
     await finishSpin()
     expect(onScore).toHaveBeenCalledWith(-50)
     expect(screen.getByText(/ball landed on 0/i)).toBeInTheDocument()
   })
 
-  it('groups the bets into colors, odd or even, and ranges', () => {
+  it('lists every bet in the payout reference, grouped', () => {
     setup()
     const colors = screen.getByRole('group', { name: 'Colors' })
     expect(colors).toHaveTextContent('Red')
     expect(colors).toHaveTextContent('Black')
-    expect(colors).toHaveTextContent('Green (0)')
     const ranges = screen.getByRole('group', { name: 'Ranges of numbers' })
     for (const label of ['1–18', '19–36', '1st 12', '2nd 12', '3rd 12', 'Column 1']) {
       expect(ranges).toHaveTextContent(label)
     }
+    expect(screen.queryByLabelText('Range from')).not.toBeInTheDocument()
   })
 
-  it('pays the green zero at 35 to 1', async () => {
+  it('has a clickable tile for every standard table bet', () => {
+    setup()
+    const table = screen.getByRole('group', { name: 'Betting table' })
+    for (const name of [
+      'Red',
+      'Black',
+      'Odd',
+      'Even',
+      '1–18',
+      '19–36',
+      '1st 12',
+      '2nd 12',
+      '3rd 12',
+      'Column 1',
+      'Column 2',
+      'Column 3',
+    ]) {
+      expect(within(table).getByRole('button', { name })).toBeEnabled()
+    }
+  })
+
+  it('shows red and black as bare tiles with no number', () => {
+    setup()
+    const red = screen.getByRole('button', { name: 'Red' })
+    const black = screen.getByRole('button', { name: 'Black' })
+    expect(red).toHaveTextContent(/^1:1$/)
+    expect(black).toHaveTextContent(/^1:1$/)
+  })
+
+  it('pays a straight bet on the zero at 35 to 1', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0)
     const onScore = vi.fn()
     const { user } = setup(onScore)
-    await user.click(screen.getByRole('button', { name: /^Green/ }))
+    await user.click(screen.getByRole('button', { name: 'Number 0' }))
     await user.click(screen.getByRole('button', { name: 'Spin' }))
     await finishSpin()
     expect(onScore).toHaveBeenCalledWith(1750)
@@ -129,44 +158,43 @@ describe('RouletteGame', () => {
     expect(onScore).toHaveBeenCalledWith(100)
   })
 
-  it('lets the team bet on their own range of numbers', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(9.5 / 37) // lands on 9
+  it('pays a dozen at 2 to 1', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(5.5 / 37) // lands on 5
     const onScore = vi.fn()
     const { user } = setup(onScore)
-
-    // 7 to 12 is six numbers: 5 to 1, so $50 wins $250.
-    const custom = screen.getByRole('group', { name: 'Custom range' })
-    expect(custom).toHaveTextContent('5:1')
-    expect(custom).toHaveTextContent('+$250')
-
-    await user.click(screen.getByRole('button', { name: 'Bet range' }))
-    expect(screen.getByText(/betting \$50 on/i)).toHaveTextContent('7–12')
+    await user.click(screen.getByRole('button', { name: '1st 12' }))
     await user.click(screen.getByRole('button', { name: 'Spin' }))
     await finishSpin()
-    expect(onScore).toHaveBeenCalledWith(250)
+    expect(onScore).toHaveBeenCalledWith(100)
   })
 
-  it('updates the custom range payout as the range changes', async () => {
-    const { user } = setup()
-    const to = screen.getByLabelText('Range to')
-    await user.clear(to)
-    await user.type(to, '8') // 7 to 8: two numbers, 17 to 1
-    const custom = screen.getByRole('group', { name: 'Custom range' })
-    expect(custom).toHaveTextContent('17:1')
-    expect(custom).toHaveTextContent('+$850')
+  it('pays even, odd, low and high at even money and loses them on the zero', async () => {
+    for (const [tile, roll, expected] of [
+      ['Even', 4.5 / 37, 50],
+      ['Odd', 7.5 / 37, 50],
+      ['1–18', 20.5 / 37, -50],
+      ['19–36', 30.5 / 37, 50],
+      ['Black', 0, -50],
+    ]) {
+      vi.spyOn(Math, 'random').mockReturnValue(roll)
+      const onScore = vi.fn()
+      const { user, unmount } = setup(onScore)
+      await user.click(screen.getByRole('button', { name: tile }))
+      await user.click(screen.getByRole('button', { name: 'Spin' }))
+      await finishSpin()
+      expect(onScore, tile).toHaveBeenCalledWith(expected)
+      unmount()
+      vi.restoreAllMocks()
+    }
   })
 
-  it('rejects ranges that are too big, too small or out of bounds', async () => {
+  it('highlights the numbers a picked zone covers', async () => {
     const { user } = setup()
-    const to = screen.getByLabelText('Range to')
-    await user.clear(to)
-    await user.type(to, '30') // 7 to 30 is 24 numbers
-    expect(screen.getByRole('button', { name: 'Bet range' })).toBeDisabled()
-    expect(screen.getByText(/pick 2 to 18 numbers between 1 and 36/i)).toBeInTheDocument()
-
-    await user.clear(to)
-    await user.type(to, '7') // a single number is a straight bet instead
-    expect(screen.getByRole('button', { name: 'Bet range' })).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: '2nd 12' }))
+    expect(screen.getByRole('button', { name: '2nd 12' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Number 13' })).toHaveClass('covered')
+    expect(screen.getByRole('button', { name: 'Number 24' })).toHaveClass('covered')
+    expect(screen.getByRole('button', { name: 'Number 25' })).not.toHaveClass('covered')
   })
 
   it('locks the wager and bet once the wheel is spinning', async () => {
@@ -175,6 +203,7 @@ describe('RouletteGame', () => {
     await user.click(screen.getByRole('button', { name: 'Spin' }))
     expect(screen.getByRole('slider', { name: 'Wager' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Number 18' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Red' })).toBeDisabled()
   })
 
   it('still applies the result if the popup closes mid-spin', async () => {

@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
-import { loadBoardFromFile } from '../data/loadBoard.js'
+import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { boardFingerprint, loadBoardFromFile } from '../data/loadBoard.js'
 import { gameReducer, initialGameState } from './gameReducer.js'
+import { STORAGE_KEY } from './storageKey.js'
 
-const STORAGE_KEY = 'jeopardy-game-state-v5'
 
 const GameContext = createContext(null)
 
@@ -28,10 +28,10 @@ export function GameProvider({ children }) {
     return base
   })
 
+  // A saved game is only trusted if board.json hasn't changed since it was started; the error
+  // banner is only for a first run, when there is no saved game to fall back on.
+  const hadSavedGame = useRef(Boolean(state.source))
   useEffect(() => {
-    if (state.source) {
-      return undefined
-    }
     let cancelled = false
     loadBoardFromFile()
       .then((result) => {
@@ -40,20 +40,21 @@ export function GameProvider({ children }) {
         }
         setBoardLoadError(null)
         dispatch({
-          type: 'INIT_FROM_FILE',
+          type: 'SYNC_BOARD_FILE',
           boardData: result.data,
           warnings: result.warnings,
+          fingerprint: boardFingerprint(result.data),
         })
       })
       .catch((err) => {
-        if (!cancelled) {
+        if (!cancelled && !hadSavedGame.current) {
           setBoardLoadError(err.message)
         }
       })
     return () => {
       cancelled = true
     }
-  }, [state.source])
+  }, [])
 
   useEffect(() => {
     const hasGame = Boolean(state.source || state.board)

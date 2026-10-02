@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useGame } from '../context/GameProvider.jsx'
 import { formatMoney } from '../game/scoring.js'
+import { play } from '../audio/sfx.js'
 
 function TrashIcon() {
   return (
@@ -26,12 +27,14 @@ export function TeamPanel() {
 
   function addTeam(e) {
     e.preventDefault()
+    play('coin')
     dispatch({ type: 'ADD_TEAM', name: newTeamName })
     setNewTeamName('')
   }
 
   function selectTeam(index) {
     if (index !== state.activeTeamIndex) {
+      play('tick')
       dispatch({ type: 'SET_ACTIVE_TEAM', index })
     }
   }
@@ -54,7 +57,10 @@ export function TeamPanel() {
             type="button"
             className={n === step ? 'step-chip selected' : 'step-chip secondary'}
             aria-pressed={n === step}
-            onClick={() => setStep(n)}
+            onClick={() => {
+              play('tick')
+              setStep(n)
+            }}
           >
             {n}
           </button>
@@ -97,6 +103,7 @@ export function TeamPanel() {
                     aria-label={`Remove ${team.name}`}
                     onClick={(e) => {
                       e.stopPropagation()
+                      play('pass')
                       dispatch({ type: 'REMOVE_TEAM', teamId: team.id })
                     }}
                   >
@@ -124,7 +131,10 @@ export function TeamPanel() {
                   type="button"
                   className="danger"
                   aria-label={`Subtract ${step} from ${team.name}`}
-                  onClick={() => dispatch({ type: 'ADJUST_SCORE', teamId: team.id, delta: -step })}
+                  onClick={() => {
+                    play('pass')
+                    dispatch({ type: 'ADJUST_SCORE', teamId: team.id, delta: -step })
+                  }}
                 >
                   −
                 </button>
@@ -132,7 +142,10 @@ export function TeamPanel() {
                   type="button"
                   className="success"
                   aria-label={`Add ${step} to ${team.name}`}
-                  onClick={() => dispatch({ type: 'ADJUST_SCORE', teamId: team.id, delta: step })}
+                  onClick={() => {
+                    play('coin')
+                    dispatch({ type: 'ADJUST_SCORE', teamId: team.id, delta: step })
+                  }}
                 >
                   +
                 </button>
@@ -143,7 +156,14 @@ export function TeamPanel() {
       </ul>
 
       {state.teams.length > 1 && (
-        <button type="button" className="secondary next-team-btn" onClick={() => dispatch({ type: 'NEXT_TEAM' })}>
+        <button
+          type="button"
+          className="secondary next-team-btn"
+          onClick={() => {
+            play('tick')
+            dispatch({ type: 'NEXT_TEAM' })
+          }}
+        >
           Next team
         </button>
       )}

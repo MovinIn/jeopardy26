@@ -1,6 +1,7 @@
 import { allCluesResolved, getCell } from '../game/board.js'
 import { useGame } from '../context/GameProvider.jsx'
 import { formatMoney } from '../game/scoring.js'
+import { play } from '../audio/sfx.js'
 
 export function JeopardyBoard() {
   const { state, dispatch } = useGame()
@@ -28,37 +29,58 @@ export function JeopardyBoard() {
     nextLabel = 'Go to Final Jeopardy!'
   }
 
+  const revealPhotoUrl = `${import.meta.env.BASE_URL}reveal/board-photo.png`
+
   return (
     <section className="board-section">
-      <div className="jeopardy-grid" role="grid" aria-label="Jeopardy board">
-        {state.board.categories.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="board-column" role="rowgroup">
-            <div className="category-cell" role="columnheader">
-              {category.name}
+      <div className="jeopardy-grid-wrapper">
+        <div className="board-reveal-photo" aria-hidden="true">
+          <img src={revealPhotoUrl} alt="" decoding="async" />
+        </div>
+        <div
+          className="jeopardy-grid"
+          role="grid"
+          aria-label="Jeopardy board"
+          style={{ '--categories': state.board.categories.length }}
+        >
+          {state.board.categories.map((category, categoryIndex) => (
+            <div key={categoryIndex} className="board-column" role="rowgroup">
+              <div className="category-cell" role="columnheader">
+                {category.name}
+              </div>
+              {Array.from({ length: rowCount }).map((_, rowIndex) => {
+                const cell = getCell(state.board, categoryIndex, rowIndex)
+                if (!cell) {
+                  return <div key={rowIndex} className="clue-cell empty" />
+                }
+                return (
+                  <button
+                    key={rowIndex}
+                    type="button"
+                    className={cell.resolved ? 'clue-cell resolved' : 'clue-cell'}
+                    disabled={!canPlay || cell.resolved}
+                    onClick={() => {
+                      play('tile')
+                      dispatch({ type: 'SELECT_CLUE', categoryIndex, rowIndex })
+                    }}
+                  >
+                    {cell.resolved ? '' : formatMoney(cell.value)}
+                  </button>
+                )
+              })}
             </div>
-            {Array.from({ length: rowCount }).map((_, rowIndex) => {
-              const cell = getCell(state.board, categoryIndex, rowIndex)
-              if (!cell) {
-                return <div key={rowIndex} className="clue-cell empty" />
-              }
-              return (
-                <button
-                  key={rowIndex}
-                  type="button"
-                  className={cell.resolved ? 'clue-cell resolved' : 'clue-cell'}
-                  disabled={!canPlay || cell.resolved}
-                  onClick={() => dispatch({ type: 'SELECT_CLUE', categoryIndex, rowIndex })}
-                >
-                  {cell.resolved ? '' : formatMoney(cell.value)}
-                </button>
-              )
-            })}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
       {roundDone && (
         <div className="round-end">
-          <button type="button" onClick={() => dispatch({ type: 'ADVANCE_ROUND' })}>
+          <button
+            type="button"
+            onClick={() => {
+              play('fanfare')
+              dispatch({ type: 'ADVANCE_ROUND' })
+            }}
+          >
             {nextLabel}
           </button>
         </div>
