@@ -1,0 +1,223 @@
+{
+  "title": "Game Night Jeopardy",
+  "categories": [
+    {
+      "name": "Science",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "This planet is known as the Red Planet.",
+          "answer": "What is Mars?",
+          "hint": "Fourth rock from the Sun"
+        },
+        {
+          "value": 400,
+          "clue": "H2O is the chemical formula for this.",
+          "answer": "What is water?",
+          "hint": "You drink it every day"
+        },
+        {
+          "value": 600,
+          "clue": "The force that keeps us on the ground.",
+          "answer": "What is gravity?",
+          "hint": "Newton and the apple"
+        },
+        {
+          "value": 800,
+          "clue": "The powerhouse of the cell.",
+          "answer": "What is the mitochondria?",
+          "hint": "Meme-famous organelle"
+        },
+        {
+          "value": 1000,
+          "clue": "Einstein's famous equation links energy and mass.",
+          "answer": "What is E=mc²?",
+          "hint": "Three symbols"
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "A shark terrorizes Amity Island in this Spielberg classic.",
+          "answer": "What is Jaws?",
+          "hint": "You're gonna need a bigger boat"
+        },
+        {
+          "value": 400,
+          "clue": "Luke Skywalker's father.",
+          "answer": "Who is Darth Vader?",
+          "hint": "I am your..."
+        },
+        {
+          "value": 600,
+          "clue": "Hogwarts school of witchcraft and wizardry.",
+          "answer": "What is Harry Potter?",
+          "hint": "The boy who lived"
+        },
+        {
+          "value": 800,
+          "clue": "Life is like a box of chocolates.",
+          "answer": "What is Forrest Gump?",
+          "hint": "Tom Hanks on a bench"
+        },
+        {
+          "value": 1000,
+          "clue": "A dream within a dream within a dream.",
+          "answer": "What is Inception?",
+          "hint": "Spinning top ending"
+        }
+      ]
+    },
+    {
+      "name": "Geography",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "The capital of France.",
+          "answer": "What is Paris?",
+          "hint": "City of Light"
+        },
+        {
+          "value": 400,
+          "clue": "The longest river in the world.",
+          "answer": "What is the Nile?",
+          "hint": "Flows through Egypt"
+        },
+        {
+          "value": 600,
+          "clue": "The smallest country in the world.",
+          "answer": "What is Vatican City?",
+          "hint": "Inside Rome"
+        },
+        {
+          "value": 800,
+          "clue": "This country has the most natural lakes.",
+          "answer": "What is Canada?",
+          "hint": "Maple leaf nation"
+        },
+        {
+          "value": 1000,
+          "clue": "Mount Everest is in this mountain range.",
+          "answer": "What is the Himalayas?",
+          "hint": "Between India and Tibet"
+        }
+      ]
+    },
+    {
+      "name": "Music",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "The King of Pop.",
+          "answer": "Who is Michael Jackson?",
+          "hint": "Moonwalk"
+        },
+        {
+          "value": 400,
+          "clue": "Four lads from Liverpool.",
+          "answer": "Who are The Beatles?",
+          "hint": "Yellow submarine"
+        },
+        {
+          "value": 600,
+          "clue": "Composer of the Four Seasons.",
+          "answer": "Who is Vivaldi?",
+          "hint": "Italian Baroque"
+        },
+        {
+          "value": 800,
+          "clue": "This artist sang \"Hello\" and \"Rolling in the Deep\".",
+          "answer": "Who is Adele?",
+          "hint": "British powerhouse vocalist"
+        },
+        {
+          "value": 1000,
+          "clue": "Mozart's middle name.",
+          "answer": "What is Amadeus?",
+          "hint": "Also a film title"
+        }
+      ]
+    },
+    {
+      "name": "Sports",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "You score a touchdown in this sport.",
+          "answer": "What is football?",
+          "hint": "NFL"
+        },
+        {
+          "value": 400,
+          "clue": "The number of players on a basketball court per team.",
+          "answer": "What is five?",
+          "hint": "Same as fingers on one hand"
+        },
+        {
+          "value": 600,
+          "clue": "This tournament is held at Wimbledon.",
+          "answer": "What is tennis?",
+          "hint": "Love means zero"
+        },
+        {
+          "value": 800,
+          "clue": "The country that has won the most FIFA World Cups.",
+          "answer": "What is Brazil?",
+          "hint": "South American samba nation"
+        },
+        {
+          "value": 1000,
+          "clue": "Michael Jordan's primary NBA team.",
+          "answer": "What are the Chicago Bulls?",
+          "hint": "Windy City"
+        }
+      ]
+    },
+    {
+      "name": "Pop Culture",
+      "clues": [
+        {
+          "value": 200,
+          "clue": "Blue bird social network now called X.",
+          "answer": "What is Twitter?",
+          "hint": "Elon renamed it"
+        },
+        {
+          "value": 400,
+          "clue": "Mario's brother in green.",
+          "answer": "Who is Luigi?",
+          "hint": "Taller, thinner plumber"
+        },
+        {
+          "value": 600,
+          "clue": "The streaming service with Stranger Things.",
+          "answer": "What is Netflix?",
+          "hint": "Red N logo"
+        },
+        {
+          "value": 800,
+          "clue": "This K-pop group includes Jungkook and RM.",
+          "answer": "Who is BTS?",
+          "hint": "Army fandom"
+        },
+        {
+          "value": 1000,
+          "clue": "The wizard who lives at 221B Baker Street.",
+          "answer": "Who is Sherlock Holmes?",
+          "hint": "Elementary, my dear Watson"
+        }
+      ]
+    }
+  ],
+  "spinnerEvents": [
+    "Swap scores with another team!",
+    "Double points on your next correct answer!",
+    "Do a victory dance for 10 seconds!",
+    "Pick a teammate to answer the next clue!",
+    "Everyone takes a silly team photo!",
+    "Placeholder — add your own events in JSON"
+  ]
+}

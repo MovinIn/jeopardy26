@@ -1,0 +1,383 @@
+.app-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+}
+
+.host-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.host-bar h1 {
+  margin: 0.15rem 0 0;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: var(--gold);
+  text-shadow: 0 2px 12px rgba(255, 217, 102, 0.35);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.main-stage {
+  min-width: 0;
+}
+
+.import-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.paste-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.message-list {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}
+
+.message-list.errors {
+  color: #ff9f9f;
+}
+
+.message-list.warnings {
+  color: #ffe08a;
+}
+
+.hint-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0.35rem 0;
+}
+
+.add-team-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.team-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.team-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 0.65rem;
+  background: #0c1228;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.team-card.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(255, 217, 102, 0.35);
+}
+
+.team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.team-name-input {
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  padding: 0;
+}
+
+.active-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.team-score {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin: 0.35rem 0;
+}
+
+.team-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.team-actions button {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.turn-banner {
+  text-align: center;
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.board-placeholder {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+.jeopardy-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  background: var(--board-blue-dark);
+  padding: 8px;
+  border-radius: 10px;
+  border: 3px solid #1e2a8a;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
+}
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.category-cell {
+  min-height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.35rem;
+  background: var(--board-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(0.65rem, 1.2vw, 0.95rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+}
+
+.clue-cell {
+  min-height: 4.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--board-blue);
+  color: var(--gold);
+  font-size: clamp(1rem, 2vw, 1.6rem);
+  font-weight: 700;
+  border-radius: 4px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.clue-cell:not(:disabled):hover {
+  transform: scale(1.03);
+  filter: brightness(1.15);
+}
+
+.clue-cell.resolved,
+.clue-cell.empty {
+  background: #081056;
+  color: transparent;
+  cursor: default;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 20, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+}
+
+.clue-modal {
+  width: min(720px, 100%);
+  background: #0f1630;
+  border: 2px solid var(--gold-dark);
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: pop-in 0.25s ease;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.clue-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.clue-modal-header h2 {
+  margin: 0.15rem 0 0;
+  color: var(--gold);
+  font-size: 2rem;
+}
+
+.icon-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  line-height: 1;
+  font-size: 1.4rem;
+  border-radius: 999px;
+}
+
+.active-team-line {
+  margin: 0.75rem 0;
+  color: var(--text-muted);
+}
+
+.clue-text {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  line-height: 1.35;
+  margin: 0 0 1rem;
+}
+
+.hint-box,
+.answer-box {
+  background: #162040;
+  border-left: 4px solid var(--gold);
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.score-preview {
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+}
+
+.hint-tag {
+  color: #ffe08a;
+}
+
+.clue-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.spinner-wheel {
+  width: 120px;
+  height: 120px;
+  margin: 0.75rem auto;
+  border-radius: 50%;
+  border: 6px solid var(--gold-dark);
+  background: conic-gradient(from 0deg, #ffd966, #ff9f43, #6c5ce7, #00cec9, #ffd966);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a1200;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.spinner-wheel.is-spinning {
+  animation: wheel-spin 1.2s cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+@keyframes wheel-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(1080deg);
+  }
+}
+
+.spin-result {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #162040;
+  animation: pop-in 0.25s ease;
+}
+
+.spin-result p:last-of-type {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .jeopardy-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .jeopardy-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .clue-actions button {
+    flex: 1 1 100%;
+  }
+}

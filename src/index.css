@@ -1,0 +1,88 @@
+:root {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #f4f7ff;
+  background-color: #060b1a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --board-blue: #0a1172;
+  --board-blue-dark: #060a4a;
+  --gold: #ffd966;
+  --gold-dark: #c9a227;
+  --panel: #101833;
+  --panel-border: #2a3566;
+  --success: #2ecc71;
+  --danger: #e74c3c;
+  --text-muted: #a8b3d9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1a2560 0%, #060b1a 55%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  background: linear-gradient(180deg, #ffe08a 0%, var(--gold) 100%);
+  color: #1a1200;
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: #243056;
+  color: #eef2ff;
+  border: 1px solid var(--panel-border);
+}
+
+button.success {
+  background: linear-gradient(180deg, #5ddea0 0%, var(--success) 100%);
+  color: #052010;
+}
+
+button.danger {
+  background: linear-gradient(180deg, #ff8a7a 0%, var(--danger) 100%);
+  color: #fff;
+}
+
+input,
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: #0c1228;
+  color: #f4f7ff;
+  padding: 0.5rem 0.65rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 5rem;
+}
